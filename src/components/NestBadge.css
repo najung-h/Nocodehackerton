@@ -1,0 +1,176 @@
+/* 바깥 뱃지 테두리 */
+.badge {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: #f4cf7a; /* 노란 테두리 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 안쪽 크림색 원 */
+.badge-inner {
+  width: 86%;
+  height: 86%;
+  border-radius: 50%;
+  background: #fff7dd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* 전체 장면 */
+.scene {
+  position: relative;
+  width: 80%;
+  height: 80%;
+}
+
+/* ===== 새 ===== */
+
+.bird {
+  position: absolute;
+  left: 50%;
+  bottom: 28%; /* 둥지보다 위에 넉넉히 올라오게 */
+  transform: translateX(-50%);
+  width: 46%;
+  aspect-ratio: 0.9 / 1;
+}
+
+/* 몸통 */
+.bird-body {
+  position: absolute;
+  inset: 6% 4% 6% 4%;
+  border-radius: 55% 55% 50% 50%;
+  background: #7dc9ff;
+}
+
+/* 배 */
+.bird-belly {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 4%;
+  height: 60%;
+  border-radius: 55% 55% 50% 50%;
+  background: #ffffff;
+}
+
+/* 얼굴 영역 */
+.bird-face {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  width: 78%;
+  height: 64%;
+  transform: translateX(-50%);
+}
+
+/* 파란 머리 */
+.bird-mask {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #7dc9ff;
+}
+
+/* 눈 */
+.bird-eye {
+  position: absolute;
+  top: 46%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b2a22;
+}
+
+.bird-eye-left {
+  left: 30%;
+}
+
+.bird-eye-right {
+  right: 30%;
+}
+
+/* 볼터치 */
+.bird-cheek {
+  position: absolute;
+  top: 60%;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #f6b1c0;
+  opacity: 0.9;
+}
+
+.bird-cheek-left {
+  left: 18%;
+}
+
+.bird-cheek-right {
+  right: 18%;
+}
+
+/* 부리 */
+.bird-beak {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  width: 20px;
+  height: 16px;
+  transform: translateX(-50%);
+  background: #f8c25a;
+  border-radius: 60% 60% 70% 70%;
+}
+
+/* 날개 */
+.bird-wing {
+  position: absolute;
+  top: 42%;
+  width: 32%;
+  height: 40%;
+  border-radius: 60%;
+  background: #7dc9ff;
+}
+
+.bird-wing-left {
+  left: -6%;
+}
+
+.bird-wing-right {
+  right: -6%;
+}
+
+/* ===== 둥지 ===== */
+
+.nest {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 28%;
+}
+
+.nest-layer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #b5763e;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+.nest-layer-1 {
+  width: 100%;
+  height: 70%;
+}
+
+.nest-layer-2 {
+  width: 86%;
+  height: 58%;
+  top: 10%;
+  background: #a3652f;
+}
