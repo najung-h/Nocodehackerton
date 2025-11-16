@@ -124,7 +124,7 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
               </Button>
             </div>
             <p className="text-xs text-amber-600 mt-2">
-              예: 확정일자 뭐예요? / 전세사기는 어떻게 피하나요?
+              예: 확정일자 안 받으면 어떻게 되나요? / 전세사기 위험징후는 뭘까요? / 반전세는 뭘까요?
             </p>
           </div>
         </Card>
