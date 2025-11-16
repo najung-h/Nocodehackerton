@@ -19,7 +19,7 @@ export default function App() {
   }
 
   if (currentPage === 'checklist') {
-    return <ChecklistPage onBack={() => setCurrentPage('home')} />;
+    return <ChecklistPage onBack={() => setCurrentPage('home')} onChatbot={() => setCurrentPage('chatbot')} />;
   }
 
   if (currentPage === 'chatbot') {

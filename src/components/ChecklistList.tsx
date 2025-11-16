@@ -34,6 +34,7 @@ interface ChecklistListProps {
   onOpenRegistryAnalysis?: () => void;
   onOpenEmptyJeonseCheck?: () => void;
   onExecuteAction?: (actionType: string) => void;
+  onChatbot?: () => void;
 }
 
 export function ChecklistList({
@@ -46,7 +47,8 @@ export function ChecklistList({
   onOpenOwnerCheck,
   onOpenRegistryAnalysis,
   onOpenEmptyJeonseCheck,
-  onExecuteAction
+  onExecuteAction,
+  onChatbot
 }: ChecklistListProps) {
   return (
     <div className="space-y-3">
@@ -82,6 +84,7 @@ export function ChecklistList({
               onOpenRegistryAnalysis={onOpenRegistryAnalysis}
               onOpenEmptyJeonseCheck={onOpenEmptyJeonseCheck}
               onExecuteAction={onExecuteAction}
+              onChatbot={onChatbot}
             />
             
             {/* Timeline Label */}

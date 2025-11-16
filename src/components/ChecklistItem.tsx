@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
-import { ChevronDown, ExternalLink, Calendar, AlertCircle, Trash2, Save, X, FileText, Check, UserCheck, Zap } from 'lucide-react';
+import { ChevronDown, ExternalLink, Calendar, AlertCircle, Trash2, Save, X, FileText, Check, UserCheck, Zap, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
 interface ChecklistItemProps {
@@ -37,9 +37,10 @@ interface ChecklistItemProps {
   onOpenRegistryAnalysis?: () => void;
   onOpenEmptyJeonseCheck?: () => void;
   onExecuteAction?: (actionType: string) => void;
+  onChatbot?: () => void;
 }
 
-export function ChecklistItem({ item, onToggleCheck, onUpdate, onDelete, onOpenRiskDiagnosis, onOpenOwnerCheck, onOpenRegistryAnalysis, onOpenEmptyJeonseCheck, onExecuteAction }: ChecklistItemProps) {
+export function ChecklistItem({ item, onToggleCheck, onUpdate, onDelete, onOpenRiskDiagnosis, onOpenOwnerCheck, onOpenRegistryAnalysis, onOpenEmptyJeonseCheck, onExecuteAction, onChatbot }: ChecklistItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(item.isEditing || false);
   const [editTitle, setEditTitle] = useState(item.title);
@@ -155,21 +156,73 @@ export function ChecklistItem({ item, onToggleCheck, onUpdate, onDelete, onOpenR
           <div className="px-4 pb-4 space-y-4 border-t border-gray-200 pt-4 mt-2">
             {/* WHAT - 무엇을 하는지 (실용적, action-oriented) */}
             {item.what && (
-              <div className="bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-200 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <div className="flex-shrink-0 w-16 py-1 px-2 bg-cyan-500 text-white rounded text-xs text-center">WHAT</div>
-                  <p className="text-sm text-gray-900 flex-1">{item.what}</p>
+              <div className="relative bg-gradient-to-br from-cyan-50 via-teal-50 to-cyan-50 border-2 border-cyan-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-400 rounded-t-2xl"></div>
+                
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center shadow-lg">
+                        <span className="text-lg">💡</span>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-cyan-700 font-semibold mb-2 flex items-center gap-2">
+                      이게 뭐에요?
+                      <span className="text-xs bg-cyan-200 text-cyan-700 px-2 py-0.5 rounded-full">핵심</span>
+                    </h4>
+                    <p className="text-sm text-gray-800 leading-relaxed">{item.what}</p>
+                  </div>
                 </div>
+                
+                {onChatbot && (
+                  <button
+                    onClick={onChatbot}
+                    className="group w-full flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-teal-500 border-2 border-cyan-300 hover:border-transparent rounded-xl text-cyan-700 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg transform hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4 group-hover:animate-bounce" />
+                    <span className="font-medium">AI 챗봇에게 자세히 물어보기</span>
+                    <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                  </button>
+                )}
               </div>
             )}
 
             {/* WHY - 왜 하는지 (경고/주의/설명적) */}
             {item.why && (
-              <div className="bg-gray-50 border-2 border-gray-300 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <div className="flex-shrink-0 w-16 py-1 px-2 bg-gray-600 text-white rounded text-xs text-center">WHY</div>
-                  <p className="text-sm text-gray-700 flex-1">{item.why}</p>
+              <div className="relative bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50 border-2 border-orange-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-amber-400 to-orange-400 rounded-t-2xl"></div>
+                
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
+                        <span className="text-lg">⚠️</span>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-orange-700 font-semibold mb-2 flex items-center gap-2">
+                      왜 해야 하나요?
+                      <span className="text-xs bg-orange-200 text-orange-700 px-2 py-0.5 rounded-full">중요</span>
+                    </h4>
+                    <p className="text-sm text-gray-800 leading-relaxed">{item.why}</p>
+                  </div>
                 </div>
+                
+                {onChatbot && (
+                  <button
+                    onClick={onChatbot}
+                    className="group w-full flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-gradient-to-r hover:from-orange-500 hover:to-amber-500 border-2 border-orange-300 hover:border-transparent rounded-xl text-orange-700 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg transform hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4 group-hover:animate-bounce" />
+                    <span className="font-medium">AI 챗봇에게 자세히 물어보기</span>
+                    <span className="text-lg group-hover:translate-x-1 transition-transform">→</span>
+                  </button>
+                )}
               </div>
             )}
 

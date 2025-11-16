@@ -253,7 +253,11 @@ const initialChecklists = {
 
 type ChecklistPhase = 'before' | 'during' | 'after';
 
-export function ChecklistSection() {
+interface ChecklistSectionProps {
+  onChatbot?: () => void;
+}
+
+export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   const [activeTab, setActiveTab] = useState<ChecklistPhase>('before');
   const [checklists, setChecklists] = useState(initialChecklists);
   const [showRiskDiagnosis, setShowRiskDiagnosis] = useState(false);
@@ -527,6 +531,7 @@ export function ChecklistSection() {
             onOpenRegistryAnalysis={() => setShowRegistryAnalysis(true)}
             onOpenEmptyJeonseCheck={() => setShowEmptyJeonseCheck(true)}
             onExecuteAction={handleExecuteAction}
+            onChatbot={onChatbot}
           />
           {!showOptional.before && checklists.before.some(item => item.isOptional) && (
             <Button
@@ -558,6 +563,7 @@ export function ChecklistSection() {
             onDeleteItem={handleDeleteItem}
             onOpenRiskDiagnosis={() => setShowRiskDiagnosis(true)}
             onOpenOwnerCheck={() => setShowOwnerCheck(true)}
+            onChatbot={onChatbot}
           />
           {!showOptional.during && checklists.during.some(item => item.isOptional) && (
             <Button
@@ -587,6 +593,7 @@ export function ChecklistSection() {
             onToggleCheck={handleToggleCheck}
             onUpdateItem={handleUpdateItem}
             onDeleteItem={handleDeleteItem}
+            onChatbot={onChatbot}
           />
           {!showOptional.after && checklists.after.some(item => item.isOptional) && (
             <Button
