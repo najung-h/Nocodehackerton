@@ -1,8 +1,6 @@
-import image_183c1031e148483d35585f93e39c1e87fcdc52d9 from "figma:asset/183c1031e148483d35585f93e39c1e87fcdc52d9.png";
-import image_2a81b212b759391823e79c02ecfb52fe0f3596c4 from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
-import image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3 from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
-import image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3 from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
-import image_2a81b212b759391823e79c02ecfb52fe0f3596c4 from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
+import searchFeatureImage from "figma:asset/baby.png";
+import chatbotFeatureImage from "figma:asset/mother.png";
+import checklistFeatureImage from "figma:asset/baby_in_nest.png";
 import { useState } from "react";
 import {
   Search,
@@ -135,7 +133,7 @@ export default function App() {
                     description="집 구하는 순서대로 하나씩 떠먹여줄게!"
                     onClick={() => setCurrentPage("checklist")}
                     imageUrl={
-                      image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3
+                      checklistFeatureImage
                     }
                     large
                   />
@@ -151,7 +149,7 @@ export default function App() {
                       description="딱딱한 계약 용어, 쉽게 알려줄게!"
                       onClick={() => setCurrentPage("chatbot")}
                       imageUrl={
-                        image_2a81b212b759391823e79c02ecfb52fe0f3596c4
+                        chatbotFeatureImage
                       }
                     />
                   </div>
@@ -164,7 +162,7 @@ export default function App() {
                       description="궁금한 건 언제든 물어봐!"
                       onClick={() => setCurrentPage("search")}
                       imageUrl={
-                        image_183c1031e148483d35585f93e39c1e87fcdc52d9
+                        searchFeatureImage
                       }
                     />
                   </div>

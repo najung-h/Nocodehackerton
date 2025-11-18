@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { toast } from 'sonner';
-import searchImage from "figma:asset/183c1031e148483d35585f93e39c1e87fcdc52d9.png";
+import searchImage from "figma:asset/mother.png";
 
 interface SearchPageProps {
   onBack: () => void;

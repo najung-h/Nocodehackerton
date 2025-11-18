@@ -1,5 +1,5 @@
 import React from "react";
-import nestLogo from "figma:asset/ad2e3752011621f7212e4335d9f6f0c0603e2229.png";
+import nestLogo from "figma:asset/logo.png";
 
 interface NestBadgeProps {
   size?: number; // 배지의 크기 (픽셀)

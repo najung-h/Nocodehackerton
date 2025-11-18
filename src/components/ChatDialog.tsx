@@ -6,7 +6,7 @@ import { X, Send, Paperclip, Download, Mail } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner@2.0.3';
-import chatbotImage from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
+import chatbotImage from "figma:asset/mother.png";
 
 interface Message {
   id: string;

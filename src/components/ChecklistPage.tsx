@@ -2,7 +2,7 @@ import { ArrowLeft, ClipboardList, LogIn, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ChecklistSection } from './ChecklistSection';
 import { toast } from 'sonner@2.0.3';
-import checklistImage from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
+import checklistImage from "figma:asset/baby_in_nest.png";
 
 interface ChecklistPageProps {
   onBack: () => void;

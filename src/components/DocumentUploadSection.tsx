@@ -1,4 +1,4 @@
-import image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0 from "figma:asset/7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0.png";
+import image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0 from "figma:asset/nest.png";
 import { useState, useRef } from "react";
 import {
   Upload,

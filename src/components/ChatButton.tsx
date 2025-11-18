@@ -1,5 +1,5 @@
 import { Button } from './ui/button';
-import chatbotImage from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
+import chatbotImage from "figma:asset/mother.png";
 
 interface ChatButtonProps {
   onClick: () => void;

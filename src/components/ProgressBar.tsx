@@ -1,7 +1,7 @@
 import { Progress } from "./ui/progress";
-import birdImage from "figma:asset/183c1031e148483d35585f93e39c1e87fcdc52d9.png";
-import nestImage from "figma:asset/7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0.png";
-import completedImage from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
+import birdImage from "figma:asset/baby.png";
+import nestImage from "figma:asset/nest.png";
+import completedImage from "figma:asset/baby_in_nest.png";
 
 interface ProgressBarProps {
   items: Array<{ isChecked: boolean }>;
