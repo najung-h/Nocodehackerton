@@ -54,23 +54,7 @@ export function ChecklistList({
     <div className="space-y-3">
       {items.map((item, index) => (
         <div key={item.id} className="flex gap-4">
-          {/* Timeline */}
-          {item.hasTimeline && (
-            <div className="flex flex-col items-center flex-shrink-0">
-              <div
-                className={`w-3 h-3 rounded-full border-2 ${
-                  item.isChecked
-                    ? 'bg-blue-600 border-blue-600'
-                    : item.isImportant
-                    ? 'bg-green-500 border-green-500'
-                    : 'bg-white border-gray-300'
-                }`}
-              />
-              {index < items.filter(i => i.hasTimeline).length - 1 && (
-                <div className="w-0.5 h-full min-h-[60px] bg-gray-200 my-1" />
-              )}
-            </div>
-          )}
+          {/* Timeline - removed */}
 
           {/* Checklist Item */}
           <div className="flex-1">
@@ -86,13 +70,6 @@ export function ChecklistList({
               onExecuteAction={onExecuteAction}
               onChatbot={onChatbot}
             />
-            
-            {/* Timeline Label */}
-            {item.timelineLabel && (
-              <div className={`mt-2 text-sm ${item.isImportant ? 'text-green-600' : 'text-blue-600'}`}>
-                {item.timelineLabel}
-              </div>
-            )}
           </div>
         </div>
       ))}

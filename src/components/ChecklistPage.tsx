@@ -2,6 +2,7 @@ import { ArrowLeft, ClipboardList, LogIn, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ChecklistSection } from './ChecklistSection';
 import { toast } from 'sonner@2.0.3';
+import checklistImage from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
 
 interface ChecklistPageProps {
   onBack: () => void;
@@ -25,7 +26,7 @@ export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
           <Button 
             onClick={() => toast.info('로그인 기능은 준비 중입니다')}
             variant="outline"
-            className="border-cyan-500 text-cyan-700 hover:bg-cyan-50 flex items-center gap-2"
+            className="border-[#22909D] text-[#22909D] hover:bg-[#22909D]/10 flex items-center gap-2"
           >
             <LogIn className="w-4 h-4" />
             <span className="hidden sm:inline">로그인</span>
@@ -33,15 +34,19 @@ export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
         </div>
 
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center">
-              <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-600" />
+        <div className="mb-6 sm:mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex items-center justify-center">
+              <img
+                src={checklistImage}
+                alt="둥지 짓기 플랜"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <h1 className="text-gray-900">전월세 체크리스트</h1>
+            <h1 className="text-gray-900">둥지 짓기 플랜</h1>
           </div>
           <p className="text-sm text-gray-700">
-            계약 전 필수 14개 항목을 자동으로 점검해드립니다.
+            집 구하는 순서대로 하나씩 떠먹여줄게
           </p>
         </div>
 
@@ -53,11 +58,11 @@ export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative group">
           {/* 펄스 애니메이션 효과 */}
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full opacity-75 group-hover:opacity-100 animate-pulse"></div>
+          <div className="absolute inset-0 bg-[#22909D] rounded-full opacity-75 group-hover:opacity-100 animate-pulse"></div>
           
           <Button
             onClick={onChatbot}
-            className="relative w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 via-teal-500 to-cyan-600 hover:from-cyan-600 hover:via-teal-600 hover:to-cyan-700 text-white shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-110 border-4 border-white"
+            className="relative w-16 h-16 rounded-full bg-[#22909D] hover:bg-[#22909D]/90 text-white shadow-2xl hover:shadow-[#22909D]/50 transition-all duration-300 transform hover:scale-110 border-4 border-white"
             title="둥지 AI 챗봇"
           >
             <div className="relative">

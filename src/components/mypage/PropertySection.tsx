@@ -35,6 +35,8 @@ export function PropertySection() {
   const [selectedProperty, setSelectedProperty] = useState<typeof dummyProperties[0] | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newAddress, setNewAddress] = useState('');
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [uploadPropertyId, setUploadPropertyId] = useState<number | null>(null);
 
   const handleAddProperty = () => {
     if (!newAddress.trim()) {
@@ -46,16 +48,28 @@ export function PropertySection() {
     setNewAddress('');
   };
 
+  const handleOpenUpload = (propertyId: number) => {
+    setUploadPropertyId(propertyId);
+    setShowUploadModal(true);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      toast.success('문서가 업로드되었습니다');
+      setShowUploadModal(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-gray-900 mb-2">내 주택 정보</h2>
-          <p className="text-sm text-gray-600">등록된 주택과 관련 문서를 관리할 수 있습니다.</p>
+          <h2 className="text-foreground mb-2">내 주택 정보</h2>
+          <p className="text-sm text-muted-foreground">등록된 주택과 관련 문서를 관리할 수 있습니다.</p>
         </div>
         <Button
           onClick={() => setShowAddModal(true)}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white"
+          className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           <Plus className="w-4 h-4 mr-2" />
           새 주택 등록
@@ -65,20 +79,20 @@ export function PropertySection() {
       {/* 주택 카드 그리드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {properties.map((property) => (
-          <Card key={property.id} className="p-6 bg-white border-gray-200 hover:border-cyan-300 transition-colors">
+          <Card key={property.id} className="p-6 bg-white rounded-2xl shadow-md border-border hover:border-primary/30 transition-all">
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-cyan-50 flex items-center justify-center flex-shrink-0">
-                  <Home className="w-5 h-5 text-cyan-600" />
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Home className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-gray-900 mb-1 break-words">{property.address}</h3>
-                  <p className="text-sm text-gray-500">주택 ID: {property.id}</p>
+                  <h3 className="text-foreground mb-1 break-words font-semibold">{property.address}</h3>
+                  <p className="text-sm text-muted-foreground">주택 ID: {property.id}</p>
                 </div>
               </div>
 
               <div>
-                <Badge variant="outline" className="border-cyan-200 text-cyan-700 bg-cyan-50">
+                <Badge variant="outline" className="border-primary/30 text-primary bg-primary/10">
                   <FileText className="w-3 h-3 mr-1" />
                   관련 문서 {property.documentCount}개
                 </Badge>
@@ -89,15 +103,15 @@ export function PropertySection() {
                   size="sm"
                   variant="outline"
                   onClick={() => setSelectedProperty(property)}
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                  className="flex-1 rounded-full border-border text-foreground hover:bg-muted"
                 >
                   <Eye className="w-4 h-4 mr-1" />
                   상세 보기
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => toast.info('문서 업로드 기능은 준비 중입니다')}
-                  className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white"
+                  onClick={() => handleOpenUpload(property.id)}
+                  className="flex-1 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Upload className="w-4 h-4 mr-1" />
                   문서 업로드
@@ -109,13 +123,13 @@ export function PropertySection() {
       </div>
 
       {properties.length === 0 && (
-        <Card className="p-12 bg-white border-gray-200">
-          <div className="text-center text-gray-500">
-            <Home className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+        <Card className="p-12 bg-white rounded-2xl shadow-md border-border">
+          <div className="text-center text-muted-foreground">
+            <Home className="w-12 h-12 mx-auto mb-4 text-muted" />
             <p className="mb-4">등록된 주택이 없습니다.</p>
             <Button
               onClick={() => setShowAddModal(true)}
-              className="bg-cyan-500 hover:bg-cyan-600 text-white"
+              className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <Plus className="w-4 h-4 mr-2" />
               첫 주택 등록하기
@@ -216,6 +230,43 @@ export function PropertySection() {
                   setShowAddModal(false);
                   setNewAddress('');
                 }}
+                variant="outline"
+                className="flex-1 border-gray-300 text-gray-700"
+              >
+                취소
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 문서 업로드 모달 */}
+      <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900">문서 업로드</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              주택에 관련된 문서를 업로드해주세요.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div>
+              <label className="text-sm text-gray-700 mb-2 block">문서 선택</label>
+              <Input
+                type="file"
+                onChange={handleFileUpload}
+                className="border-gray-300"
+              />
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={() => setShowUploadModal(false)}
+                className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white"
+              >
+                업로드
+              </Button>
+              <Button
+                onClick={() => setShowUploadModal(false)}
                 variant="outline"
                 className="flex-1 border-gray-300 text-gray-700"
               >

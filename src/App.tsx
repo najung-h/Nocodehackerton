@@ -1,113 +1,297 @@
-import { useState } from 'react';
-import { Search, ClipboardList, MessageCircle, LogIn, User as UserIcon } from 'lucide-react';
-import { NestBadge } from './components/NestBadge';
-import { FeatureCard } from './components/FeatureCard';
-import { SearchPage } from './components/SearchPage';
-import { ChecklistPage } from './components/ChecklistPage';
-import { ChatbotPage } from './components/ChatbotPage';
-import { MyPage } from './components/MyPage';
-import { Button } from './components/ui/button';
-import { toast } from 'sonner';
+import image_183c1031e148483d35585f93e39c1e87fcdc52d9 from "figma:asset/183c1031e148483d35585f93e39c1e87fcdc52d9.png";
+import image_2a81b212b759391823e79c02ecfb52fe0f3596c4 from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
+import image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3 from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
+import image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3 from "figma:asset/d5fc0f218b8d903f791d1bdbffdaa485864b2ee3.png";
+import image_2a81b212b759391823e79c02ecfb52fe0f3596c4 from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
+import { useState } from "react";
+import {
+  Search,
+  ClipboardList,
+  MessageCircle,
+  LogIn,
+  LogOut,
+  User as UserIcon,
+} from "lucide-react";
+import { NestBadge } from "./components/NestBadge";
+import { FeatureCard } from "./components/FeatureCard";
+import { SearchPage } from "./components/SearchPage";
+import { ChecklistPage } from "./components/ChecklistPage";
+import { ChatbotPage } from "./components/ChatbotPage";
+import { MyPage } from "./components/MyPage";
+import { ChatButton } from "./components/ChatButton";
+import { ChatDialog } from "./components/ChatDialog";
+import { DocumentUploadSection } from "./components/DocumentUploadSection";
+import { Button } from "./components/ui/button";
+import { toast } from "sonner";
 
-type Page = 'home' | 'search' | 'checklist' | 'chatbot' | 'mypage';
+type Page =
+  | "home"
+  | "search"
+  | "checklist"
+  | "chatbot"
+  | "mypage";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showChatDialog, setShowChatDialog] = useState(false);
 
-  if (currentPage === 'search') {
-    return <SearchPage onBack={() => setCurrentPage('home')} />;
-  }
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    toast.success("로그인되었습니다");
+  };
 
-  if (currentPage === 'checklist') {
-    return <ChecklistPage onBack={() => setCurrentPage('home')} onChatbot={() => setCurrentPage('chatbot')} />;
-  }
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    toast.success("로그아웃되었습니다");
+  };
 
-  if (currentPage === 'chatbot') {
-    return <ChatbotPage onBack={() => setCurrentPage('home')} />;
-  }
+  const handleMyPageClick = () => {
+    if (!isLoggedIn) {
+      toast.info("로그인이 필요한 서비스입니다");
+      handleLogin(); // 자동 로그인 (실제로는 로그인 페이지로 이동)
+    } else {
+      setCurrentPage("mypage");
+    }
+  };
 
-  if (currentPage === 'mypage') {
-    return <MyPage onBack={() => setCurrentPage('home')} />;
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 py-3 md:py-4">
-          <div className="flex items-center justify-between gap-2 md:gap-3">
-            <div className="flex items-center gap-2 md:gap-3">
-              <div className="flex items-center justify-center">
-                <NestBadge size={48} />
+  const renderPageContent = () => {
+    switch (currentPage) {
+      case "search":
+        return (
+          <SearchPage onBack={() => setCurrentPage("home")} />
+        );
+      case "checklist":
+        return (
+          <ChecklistPage
+            onBack={() => setCurrentPage("home")}
+            onChatbot={() => setCurrentPage("chatbot")}
+          />
+        );
+      case "chatbot":
+        return (
+          <ChatbotPage onBack={() => setCurrentPage("home")} />
+        );
+      case "mypage":
+        return (
+          <MyPage
+            onBack={() => setCurrentPage("home")}
+            isLoggedIn={isLoggedIn}
+            onLogout={handleLogout}
+          />
+        );
+      default:
+        return (
+          <main className="container mx-auto px-4 sm:px-6 py-8 md:py-12">
+            <div className="max-w-6xl mx-auto">
+              {/* Welcome Section */}
+              <div className="mb-8 md:mb-12 text-center">
+                <h2 className="mb-3 md:mb-4 text-foreground px-4 text-[20px]">
+                  안전한 임대차 계약의 시작
+                </h2>
+                <div className="flex flex-row items-center justify-center gap-4 mb-4 md:mb-6">
+                  <NestBadge size={120} />
+                  <div className="text-left">
+                    <h1 className="text-3xl md:text-4xl text-[#83AF3B] mb-1 font-bold">
+                      둥지
+                    </h1>
+                    <p className="text-sm md:text-base text-gray-600 font-bold">
+                      집 찾는 아기새
+                    </p>
+                  </div>
+                </div>
+                <p className="md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 text-[15px]">
+                  처음 집을 구하는 사회 초년생을 위한 임대차
+                  계약 가이드입니다.
+                  <br className="hidden sm:block" />
+                  법률 용어 한 줄 모르는 '아기새'도 안전하게
+                  둥지를 틀 수 있도록 도와드릴게요.
+                </p>
               </div>
-              <div>
-                <h1 className="text-gray-900">둥지</h1>
-                <p className="text-xs sm:text-sm text-gray-600">집 찾는 아기새의 첫 전월세 비서</p>
+
+              {/* Feature Grid - 3 Columns */}
+              <div className="flex flex-col md:flex-row items-stretch gap-6 max-w-6xl mx-auto mb-8">
+                {/* 1. AI 계약서 스캔 */}
+                <div className="flex-1">
+                  <DocumentUploadSection
+                    onAnalysisComplete={(report) => {
+                      toast.success(
+                        `${report.checkedItems.length}개 항목이 자동 체크되었습니다`,
+                      );
+                      // 체크리스트 페이지로 이동
+                      setTimeout(
+                        () => setCurrentPage("checklist"),
+                        1500,
+                      );
+                    }}
+                  />
+                </div>
+
+                {/* 2. 체크리스트 */}
+                <div className="flex-1">
+                  <FeatureCard
+                    icon={ClipboardList}
+                    title="둥지 짓기 플랜"
+                    description="집 구하는 순서대로 하나씩 떠먹여줄게!"
+                    onClick={() => setCurrentPage("checklist")}
+                    imageUrl={
+                      image_d5fc0f218b8d903f791d1bdbffdaa485864b2ee3
+                    }
+                    large
+                  />
+                </div>
+
+                {/* 3. 챗봇 + 검색 (Column) */}
+                <div className="flex-1 flex flex-col gap-6">
+                  {/* 챗봇 */}
+                  <div className="flex-1">
+                    <FeatureCard
+                      icon={MessageCircle}
+                      title="어미새 챗봇"
+                      description="딱딱한 계약 용어, 쉽게 알려줄게!"
+                      onClick={() => setCurrentPage("chatbot")}
+                      imageUrl={
+                        image_2a81b212b759391823e79c02ecfb52fe0f3596c4
+                      }
+                    />
+                  </div>
+
+                  {/* 검색 */}
+                  <div className="flex-1">
+                    <FeatureCard
+                      icon={Search}
+                      title="똑똑한 법률 사전"
+                      description="궁금한 건 언제든 물어봐!"
+                      onClick={() => setCurrentPage("search")}
+                      imageUrl={
+                        image_183c1031e148483d35585f93e39c1e87fcdc52d9
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-            <Button 
-              onClick={() => setCurrentPage('mypage')}
-              variant="outline"
-              className="border-cyan-500 text-cyan-700 hover:bg-cyan-50 flex items-center gap-2"
-            >
-              <UserIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">마이페이지</span>
-            </Button>
+          </main>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header - Always visible */}
+      <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-4 max-w-6xl mx-auto">
+            {/* Left Navigation */}
+            <nav className="hidden md:flex items-center gap-6">
+              <button
+                onClick={() => setCurrentPage("home")}
+                className={`text-sm transition-colors ${
+                  currentPage === "home"
+                    ? "text-[#83AF3B] font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                홈
+              </button>
+              <button
+                onClick={() => setCurrentPage("checklist")}
+                className={`text-sm transition-colors ${
+                  currentPage === "checklist"
+                    ? "text-[#83AF3B] font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                체크리스트
+              </button>
+              <button
+                onClick={() => setCurrentPage("chatbot")}
+                className={`text-sm transition-colors ${
+                  currentPage === "chatbot"
+                    ? "text-[#83AF3B] font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                AI 챗봇
+              </button>
+              <button
+                onClick={() => setCurrentPage("search")}
+                className={`text-sm transition-colors ${
+                  currentPage === "search"
+                    ? "text-[#83AF3B] font-semibold"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                법률 검색
+              </button>
+            </nav>
+
+            {/* Center Logo */}
+            <div className="flex items-center gap-2 md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
+              <NestBadge size={40} />
+              <h1 className="text-foreground text-xl font-bold text-[24px]">
+                둥지
+              </h1>
+            </div>
+
+            {/* Right Auth Buttons */}
+            <div className="flex items-center gap-2">
+              {isLoggedIn ? (
+                <>
+                  <Button
+                    onClick={handleMyPageClick}
+                    variant="ghost"
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    <UserIcon className="w-4 h-4 mr-1" />
+                    <span className="hidden sm:inline">
+                      마이페이지
+                    </span>
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
+                    variant="ghost"
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    <LogOut className="w-4 h-4 mr-1" />
+                    <span className="hidden sm:inline">
+                      로그아웃
+                    </span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleLogin}
+                    variant="ghost"
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    로그인
+                  </Button>
+                  <Button
+                    onClick={handleLogin}
+                    className="bg-[#83AF3B] hover:bg-[#6f9632] text-white text-sm rounded-full px-4"
+                  >
+                    회원가입
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 py-8 md:py-12">
-        <div className="max-w-6xl mx-auto">
-          {/* Welcome Section */}
-          <div className="mb-8 md:mb-12 text-center">
-            <div className="flex justify-center mb-4 md:mb-6">
-              <NestBadge size={120} />
-            </div>
-            <h2 className="mb-3 md:mb-4 text-gray-900 px-4">안전한 전월세 계약의 시작</h2>
-            <p className="text-sm md:text-base text-gray-700 max-w-2xl mx-auto leading-relaxed px-4">
-              처음 집을 구하는 사회 초년생을 위한 전월세 계약 가이드입니다.
-              <br className="hidden sm:block" />
-              법률 용어 한 줄 모르는 '아기새'도 안전하게 둥지를 틀 수 있도록 도와드릴게요.
-            </p>
-          </div>
+      {/* Page Content */}
+      {renderPageContent()}
 
-          {/* Feature Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
-            {/* Left: Checklist (Full Height) */}
-            <div className="md:row-span-2 w-full">
-              <FeatureCard
-                icon={ClipboardList}
-                title="전월세 체크리스트"
-                description="계약 전 필수 14개 항목을 자동으로 점검해드립니다."
-                onClick={() => setCurrentPage('checklist')}
-                large
-              />
-            </div>
-            
-            {/* Right Top: Chatbot */}
-            <div className="w-full">
-              <FeatureCard
-                icon={MessageCircle}
-                title="둥지 AI 챗봇"
-                description="어려운 법률 언어도 쉽게 설명해주는 당신의 전월세 비서."
-                onClick={() => setCurrentPage('chatbot')}
-              />
-            </div>
-            
-            {/* Right Bottom: Search */}
-            <div className="w-full">
-              <FeatureCard
-                icon={Search}
-                title="판례/법률 검색"
-                description="궁금한 전월세 분쟁이나 법령을 한 번에 찾아보세요."
-                onClick={() => setCurrentPage('search')}
-              />
-            </div>
-          </div>
-        </div>
-      </main>
+      {/* 글로벌 챗봇 버튼 - 챗봇 페이지가 아닐 때만 표시 */}
+      {currentPage !== "chatbot" && (
+        <ChatButton onClick={() => setShowChatDialog(true)} />
+      )}
+      <ChatDialog
+        isOpen={showChatDialog}
+        onClose={() => setShowChatDialog(false)}
+      />
     </div>
   );
 }

@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { X, Send, Paperclip, Download, Mail, Sparkles } from 'lucide-react';
+import { X, Send, Paperclip, Download, Mail } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner@2.0.3';
+import chatbotImage from "figma:asset/2a81b212b759391823e79c02ecfb52fe0f3596c4.png";
 
 interface Message {
   id: string;
@@ -241,21 +242,21 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[85vh] p-0 gap-0 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 flex flex-col [&>button]:hidden">
+      <DialogContent className="max-w-4xl h-[85vh] p-0 gap-0 bg-gradient-to-br from-green-50 to-lime-50 border-[#83AF3B] flex flex-col [&>button]:hidden">
         <DialogTitle className="sr-only">둥지 AI 비서</DialogTitle>
         <DialogDescription className="sr-only">
           전월세 계약 관련 질문을 AI 비서에게 물어보세요
         </DialogDescription>
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 md:p-6 border-b border-amber-200 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-white rounded-t-lg flex-shrink-0">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-[#83AF3B]/30 bg-gradient-to-r from-[#83AF3B] via-[#9ec590] to-[#83AF3B] text-white rounded-t-lg flex-shrink-0">
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <div className="bg-white/20 backdrop-blur-sm p-1.5 md:p-2 rounded-full">
-              <Sparkles className="size-5 md:size-6 text-white drop-shadow-md" />
+              <img src={chatbotImage} className="size-5 md:size-6 text-white drop-shadow-md" />
             </div>
             <div className="min-w-0">
               <h2 className="text-white truncate">둥지 AI 비서</h2>
-              <p className="text-xs text-amber-50 hidden sm:block">무엇이든 물어보세요</p>
+              <p className="text-xs text-green-50 hidden sm:block">무엇이든 물어보세요</p>
             </div>
           </div>
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
@@ -287,7 +288,12 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4 md:p-6 bg-gradient-to-b from-amber-50/50 to-orange-50/30 overflow-y-auto">
+        <ScrollArea 
+          className="flex-1 p-4 md:p-6 bg-gradient-to-b from-green-50/50 to-lime-50/30 overflow-y-auto"
+          aria-live="polite"
+          aria-atomic="false"
+          aria-relevant="additions"
+        >
           <div className="space-y-4 max-w-3xl mx-auto h-full">
             {messages.map((message) => (
               <div
@@ -297,8 +303,8 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                 <div
                   className={`max-w-[85%] md:max-w-[80%] rounded-2xl p-3 md:p-4 shadow-md ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-br from-amber-500 to-orange-500 text-white'
-                      : 'bg-white text-amber-950 border border-amber-200'
+                      ? 'bg-gradient-to-br from-[#83AF3B] to-[#9ec590] text-white'
+                      : 'bg-white text-gray-950 border border-gray-200'
                   }`}
                 >
                   <div className="whitespace-pre-wrap break-words prose prose-sm max-w-none text-sm md:text-base">
@@ -306,14 +312,14 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                       // 마크다운 스타일 헤더 처리
                       if (line.startsWith('## ')) {
                         return (
-                          <h3 key={i} className={message.role === 'user' ? 'text-white' : 'text-amber-900'}>
+                          <h3 key={i} className={message.role === 'user' ? 'text-white' : 'text-gray-900'}>
                             {line.replace('## ', '')}
                           </h3>
                         );
                       }
                       if (line.startsWith('### ')) {
                         return (
-                          <h4 key={i} className={message.role === 'user' ? 'text-white' : 'text-amber-800'}>
+                          <h4 key={i} className={message.role === 'user' ? 'text-white' : 'text-gray-800'}>
                             {line.replace('### ', '')}
                           </h4>
                         );
@@ -335,7 +341,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                       return line ? <p key={i}>{line}</p> : <br key={i} />;
                     })}
                   </div>
-                  <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-amber-100' : 'text-amber-600'}`}>
+                  <div className={`text-xs mt-2 ${message.role === 'user' ? 'text-green-100' : 'text-gray-600'}`}>
                     {message.timestamp.toLocaleTimeString('ko-KR', {
                       hour: '2-digit',
                       minute: '2-digit'
@@ -347,11 +353,11 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
 
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-white rounded-2xl p-4 shadow-md border border-amber-200">
+                <div className="bg-white rounded-2xl p-4 shadow-md border border-gray-200">
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-orange-500 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-amber-600 rounded-full animate-bounce delay-200" />
+                    <div className="w-2 h-2 bg-[#83AF3B] rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-[#9ec590] rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-[#83AF3B] rounded-full animate-bounce delay-200" />
                   </div>
                 </div>
               </div>
@@ -363,14 +369,14 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
 
         {/* Suggested Questions */}
         {messages.length === 1 && (
-          <div className="px-6 pb-3 bg-amber-50/50">
-            <p className="text-sm text-amber-800 mb-3">💡 자주 묻는 질문:</p>
+          <div className="px-6 pb-3 bg-green-50/50">
+            <p className="text-sm text-[#83AF3B] mb-3">💡 자주 묻는 질문:</p>
             <div className="flex flex-wrap gap-2">
               {suggestedQuestions.map((question, index) => (
                 <Badge
                   key={index}
                   variant="outline"
-                  className="cursor-pointer bg-white hover:bg-amber-100 border-amber-300 text-amber-800 hover:border-amber-400 transition-all shadow-sm hover:shadow-md rounded-full px-3 py-1"
+                  className="cursor-pointer bg-white hover:bg-[#83AF3B]/10 border-[#83AF3B] text-[#83AF3B] hover:border-[#83AF3B] transition-all shadow-sm hover:shadow-md rounded-full px-3 py-1"
                   onClick={() => handleSuggestedQuestion(question)}
                 >
                   {question}
@@ -381,7 +387,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
         )}
 
         {/* Input */}
-        <div className="p-6 border-t border-amber-200 bg-white/80 backdrop-blur-sm rounded-b-lg">
+        <div className="p-6 border-t border-gray-200 bg-white/80 backdrop-blur-sm rounded-b-lg">
           <div className="flex gap-2">
             <input
               ref={fileInputRef}
@@ -394,7 +400,7 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
               variant="outline"
               size="icon"
               onClick={handleFileUpload}
-              className="border-amber-300 text-amber-700 hover:bg-amber-100 hover:text-amber-900 rounded-full"
+              className="border-[#83AF3B] text-[#83AF3B] hover:bg-[#83AF3B]/10 hover:text-[#83AF3B] rounded-full"
             >
               <Paperclip className="size-4" />
             </Button>
@@ -408,12 +414,12 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
                   handleSendMessage();
                 }
               }}
-              className="flex-1 border-amber-300 focus:border-amber-500 focus:ring-amber-500 rounded-full bg-white"
+              className="flex-1 border-gray-300 focus:border-[#83AF3B] focus:ring-[#83AF3B] rounded-full bg-white"
             />
             <Button 
               onClick={handleSendMessage} 
               disabled={!inputValue.trim()}
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full shadow-md"
+              className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white rounded-full shadow-md"
             >
               <Send className="size-4" />
             </Button>

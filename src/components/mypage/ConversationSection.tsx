@@ -101,7 +101,7 @@ export function ConversationSection() {
         </div>
         <Button
           onClick={() => toast.info('새 대화 시작 기능은 준비 중입니다')}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white"
+          className="bg-[#83AF3B] hover:bg-[#6f9632] text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           새로운 대화
@@ -123,7 +123,7 @@ export function ConversationSection() {
                   onClick={() => setSelectedConv(conv.id)}
                   className={`w-full text-left p-3 rounded-lg transition-colors ${
                     selectedConv === conv.id
-                      ? 'bg-cyan-50 border border-cyan-200'
+                      ? 'bg-[#83AF3B]/10 border border-[#83AF3B]'
                       : 'hover:bg-gray-50'
                   }`}
                 >

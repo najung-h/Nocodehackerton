@@ -45,9 +45,9 @@ const initialChecklists = {
     },
     {
       id: 'b3',
-      title: '등기부등본 확인하기',
-      what: '이 집의 \'주민등록증\' 같은 서류를 떼어보는 거예요. 진짜 집주인이 맞는지, 이 집을 담보로 은행에서 돈을 얼마나 빌렸는지(근저당) 확인하는 거예요.',
-      why: '이 서류를 보면 집의 법적인 상태를 정확히 알 수 있어요. 만약 집주인이 빚이 너무 많으면, 나중에 집이 경매로 넘어갔을 때 내 보증금을 떼일 수 있어요. 그래서 계약 전, 이사 직전 등 여러 번 확인해야 해요.',
+      title: '선순위 권리관계 확인하기',
+      what: '나의 전세보증금보다 선순위의 채권이나 보증금이 있을 경우, 보증금 전액 반환이 어려울 수 있으므로 가등기·가압류 등의 여부, 담보권 설정 여부등을 확인하는 거예요.',
+      why: '집에 이미 선순위로 보호받는 권리가 많이 잡혀 있다면, 집이 경매로 넘어갔을 때, 선순위 권리자들이 먼저 배당을 가져가고, 나는 보증금을 돌려받지 못할 위험이 있어요. 그래서 내 보증금보다 먼저 보호되는 권리가 얼마나 있는지 반드시 확인해야 해요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
@@ -59,17 +59,26 @@ const initialChecklists = {
       ]
     },
     {
-      id: 'b4',
-      title: '우선변제권 확보하기',
-      what: '이사(전입신고) + 계약서에 \'확정일자\'라는 도장을 받아서, \'내 보증금을 다른 빚쟁이들보다 먼저 돌려받을 수 있는 힘\'을 만드는 거예요.',
-      why: '그냥 이사만(전입신고) 하면, 집이 경매에 넘어갔을 때 은행 빚보다 내 보증금을 늦게 받아요. 하지만 \'확정일자\' 도장이 있으면, 내 순서가 빨라져서 은행보다 먼저 내 보증금을 챙길 수 있게 돼요.',
+      id: 'b3-1',
+      title: '다가구인 경우 선순위 권리관계 확인하기',
+      what: '이 집에 나보다 먼저 살고 있는 세입자들의 전입일(대항력)과 확정일자(우선변제권)를 확인하는 단계예요. 등기부등본에는 나오지 않는 숨겨진 선순위 보증금을 확인하는 절차로 다가구 주택인 경우 추가 확인을 하는 단계예요.',
+      why: '다가구 주택은 기존 세입자의 보증금이 내 보증금보다 먼저 보호 받는 선순위 채권이 될 수 있어요. 이 정보는 등기부등본에 전혀 표시되지 않기 때문에, 반드시 전입세대열람 + 확정일자 부여현황을 통해 기존 세입자의 보증금 총액과 우선순위를 확인해야 내 보증금이 위험해지는 상황을 피할 수 있어요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
-      isImportant: true,
-      actionType: 'priority_payment',
-      actionLabel: '전입신고 및 확정일자 받기',
-      guidelines: '전입신고 후 확정일자를 받으면 우선변제권이 발생합니다.'
+      isOptional: true,
+      links: [
+        { label: '전입세대 열람 발급', url: 'https://www.gov.kr' }
+      ]
+    },
+    {
+      id: 'b4',
+      title: '무허가·불법 건축물 여부 확인하기',
+      what: '위반건축물은 아닌지, 건물 용도가 주택이 맞는지(근린생활시설은 아닌지), 건물의 등호수가 건축물 대장상 동호수와 일치하는지 확인하기 위해서 하는거에요.',
+      why: '전입신고를 할 수 없는 무허가 및 불법 건축물은 주택임대차보호법 적용을 받지 않아 보증금 보호가 어려운 경우가 있어서 꼭 확인해야 해요.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true
     }
   ],
   during: [
@@ -84,8 +93,19 @@ const initialChecklists = {
       hasOwnerCheck: true
     },
     {
+      id: 'd1-1',
+      title: '대리인과 계약한다면? 위임장 확인하기',
+      what: '집주인 대신 나온 사람(대리인)이 정말 집주인에게 "네가 나 대신 계약해도 돼"라고 허락받았는지 \'위임장\'이라는 서류와 도장(인감)을 확인하는 거예요.',
+      why: '집주인 허락도 안 받은 사람이랑 계약하면 그 계약은 가짜(무효)가 될 수 있어요. 집주인의 아내, 아들, 친구라고 해도 꼭 서류(위임장, 인감증명서)를 확인해야 안전해요.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true,
+      isOptional: true,
+      guidelines: '위임장에는 인감도장이 날인되어야 하며, 인감증명서를 함께 확인한다.'
+    },
+    {
       id: 'd2',
-      title: '신탁등기 전세사기 예방하기',
+      title: '신탁등기 상태 확인하기',
       what: '이 집 주인이 집을 \'신탁회사\'라는 곳에 맡겨놨는지 확인하는 거예요.',
       why: '집이 신탁회사에 맡겨져(신탁등기) 있으면, 집의 진짜 주인은 \'신탁회사\'예요. 만약 원래 주인(집주인)이랑만 계약하고 신탁회사의 허락을 안 받으면, 그 계약은 가짜(무효)가 돼요. 그럼 나는 집에서 쫓겨나고 보증금도 못 받을 수 있어요.',
       isChecked: false,
@@ -95,6 +115,16 @@ const initialChecklists = {
       links: [
         { label: '신탁등기 확인 방법', url: 'https://www.iros.go.kr' }
       ]
+    },
+    {
+      id: 'd2-1',
+      title: '신탁원부 발급 확인하기',
+      what: '집이 신탁 상태라면 \'신탁원부\'라는 공식 문서를 통해 누가 실제로 이 집의 소유권을 가지고 있고, 누가 임대차 계약을 맺을 권한이 있는지 확인하는 절차예요.',
+      why: '신탁등기가 되어 있는 집은 겉으로 보이는 집주인이 실제 계약 권한을 갖고 있지 않을 수 있어요. 신탁원부를 보면 실제 소유권자, 계약 체결 권한, 신탁회사 동의가 필요한지 여부를 정확히 알 수 있어요.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true,
+      isOptional: true
     },
     {
       id: 'd3',
@@ -110,9 +140,9 @@ const initialChecklists = {
     },
     {
       id: 'd4',
-      title: '계약 내용 꼼꼼히 확인하기',
-      what: '계약서에 적힌 집 주소, 주인이름, 보증금 액수, 이사 날짜 등이 내가 알고 있는 거랑 똑같은지 글자 하나하나 다 확인하는 거예요.',
-      why: '전세계약은 아주 큰돈이 오가는 약속이에요. 계약서에 숫자 하나, 글자 하나만 잘못 적혀도 나중에 큰 문제(돈 문제, 법적 문제)가 생길 수 있어요.',
+      title: '계약 내용 꼼꼼히 확인 및 작성하기',
+      what: '계약서에 적힌 집 주소, 주인 이름, 보증금 액수, 이사 날짜 등이 내가 알고 있는 것과 똑같은지 글자 하나하나 다 확인하는 거예요.',
+      why: '전세 계약은 아주 큰 돈이 오가는 약속이에요. 계약서에 숫자 하나, 글자 하나만 잘못 적혀도 나중에 큰 문제(돈 문제, 법적 문제)가 생길 수 있어요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
@@ -123,60 +153,30 @@ const initialChecklists = {
       ]
     },
     {
-      id: 'd5',
-      title: '특약사항 작성하기',
+      id: 'd4-1',
+      title: '특약사항을 명확하게 확인 및 작성하기',
       what: '계약서의 \'특별 약속\' 칸에 집주인과 말로 정한 약속들(예: "집주인이 5월 10일까지 도배 새로 해준다", "이사 나갈 때 청소비 안 받는다")을 글로 적어두는 거예요.',
       why: '말로만 한 약속은 나중에 집주인이 "나 그런 말 한 적 없는데?" 하고 오리발 내밀면 증거가 없어서 불리해요. 계약서에 \'특약\'으로 적어 놔야 법적으로 힘이 생겨요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
       guidelines: '수리 의무, 중개수수료 분담, 하자 보수 등을 명확히 기재한다.'
-    },
-    {
-      id: 'd6',
-      title: '선순위 임차보증금 / 근저당 허위 고지 예방하기',
-      what: '(주로 원룸 건물 같은 \'다가구주택\'에서) 나보다 먼저 이 집에 이사 온 다른 사람들의 보증금이 총 얼마인지, 집주인 빚은 얼마인지 확인하는 거예요.',
-      why: '만약 집이 경매로 넘어가면, 나보다 먼저 이사 온 \'선배\' 세입자들이 보증금을 먼저 받아 가요. 내 차례가 왔을 땐 돈이 안 남아있을 수도 있어요. 그래서 내 순서가 안전한지 미리 확인해야 해요.',
-      isChecked: false,
-      isCustom: false,
-      hasTimeline: true,
-      isOptional: true,
-      links: [
-        { label: '전입세대 열람 발급', url: 'https://www.gov.kr' }
-      ]
-    },
-    {
-      id: 'd7',
-      title: '위임장 확인하기',
-      what: '집주인 대신 나온 사람(대리인)이 정말 집주인에게 "네가 나 대신 계약해도 돼"라고 허락받았는지 \'위임장\'이라는 서류와 도장(인감)을 확인하는 거예요.',
-      why: '집주인 허락도 안 받은 사람이랑 계약하면 그 계약은 가짜(무효)가 될 수 있어요. 집주인의 아내, 아들, 친구라고 해도 꼭 서류(위임장, 인감증명서)를 확인해야 안전해요.',
-      isChecked: false,
-      isCustom: false,
-      hasTimeline: true,
-      isOptional: true,
-      guidelines: '위임장에는 인감도장이 날인되어야 하며, 인감증명서를 함께 확인한다.'
     }
   ],
   after: [
     {
       id: 'a1',
-      title: '대항력 확보하기',
-      what: '①그 집에 진짜 이사해서 살고, ②주민센터에 "저 이 집으로 이사 왔어요"라고 신고(전입신고)하는 거예요.',
-      why: '이 두 가지를 해야 \'대항력\'이라는 힘이 생겨요. 이 힘이 있으면, 계약 기간 중에 집주인이 바뀌어도 "난 계약 기간 끝날 때까지 여기서 살 거예요!"라고 당당하게 말할 수 있어요. 새 주인이 나가라고 해도 안 나가도 돼요.',
+      title: '잔금 지급 전 : 권리변동·이중계약·특약 불이행 점검하기',
+      what: '전세 잔금을 최종 지급하기 직전에 다시 한번 확인하는 과정이에요. 잔금을 내는 순간부터 임대차 계약이 실제로 성립되며, 그 즉시 발생하는 위험요소를 미리 차단하는 단계에요.',
+      why: '계약서만 작성한 상태에서는 아직 법적 보호를 받지 못하기 때문에, 잔금을 지급하기 전에 집의 권리관계가 안전하게 유지되고 있는지 반드시 다시 확인해야 해요.등기부등본을 새로 발급해 소유권 변경·근저당 설정·압류 등 위험 요소가 생기지 않았는지, 기존 세입자가 정확히 퇴거했는지, 그리고 계약서에 적힌 특약사항들이 실제로 이행되었는지 점검해야 잔금 지급 이후 내 보증금을 안전하게 보호할 수 있어요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
-      timelineLabel: '대항력 획득!',
-      isImportant: true,
-      hasCalendar: true,
-      links: [
-        { label: '정부24에서 전입신고', url: 'https://www.gov.kr' },
-        { label: '인터넷등기소에서 확정일자', url: 'https://www.iros.go.kr' }
-      ]
+      guidelines: '6개월마다 등기부등본을 다시 발급받아 확인하는 것을 권장한다.'
     },
     {
       id: 'a2',
-      title: '주택 확인 및 이사',
+      title: '주택 확인 및 이사하기',
       what: '이사 들어가기 전/후에 집에 흠집 난 곳(벽지, 바닥 등)이나 고장 난 건 없는지 사진을 찍어두고, 이사 업체랑 약속을 잘 정하고, 전기요금/가스비 등을 잘 정리하는 거예요.',
       why: '이사 들어오기 전에 미리 사진을 안 찍어두면, 나중에 이사 나갈 때 집주인이 "이거 네가 망가뜨렸지? 돈 내놔"라고 할 때 억울할 수 있어요. 또, 이사 업체나 공과금 문제를 미리 정리해야 나중에 돈 문제로 싸우지 않아요.',
       isChecked: false,
@@ -187,19 +187,75 @@ const initialChecklists = {
     },
     {
       id: 'a3',
-      title: '계약 종료 후 이사 나가기',
-      what: '계약 기간이 끝나기 전에(보통 2~6개월 전) 집주인에게 "저 이사 나갈 거예요"라고 미리 말하고, 이사 당일에 공과금(전기세 등)을 다 낸 뒤 보증금을 돌려받고 나가는 거예요.',
-      why: '이사 가겠다고 미리 말 안 하면, 집주인은 "계속 살 건가 보네?" 하고 계약이 자동으로 2년 더 연장(묵시적 갱신)될 수 있어요. 또, 보증금을 돌려받기 전에 짐을 빼거나 전입신고를 옮기면 안 돼요.',
+      title: '전입신고하여 대항력 확보하기',
+      what: '①그 집에 진짜 이사해서 살고, ②주민센터에 "저 이 집으로 이사 왔어요"라고 신고(전입신고)하는 거예요.',
+      why: '이 두 가지를 해야 \'대항력\'이라는 힘이 생겨요. 이 힘이 있으면, 계약 기간 중에 집주인이 바뀌어도 "난 계약 기간 끝날 때까지 여기서 살 거예요!"라고 당당하게 말할 수 있어요. 새 주인이 나가라고 해도 안 나가도 돼요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
+      timelineLabel: '대항력 획득!',
+      isImportant: true,
       hasCalendar: true,
-      isOptional: true,
-      guidelines: '계약 종료 2~3개월 전에 임대인에게 통보하는 것이 좋다.'
+      isOptional: false,
+      guidelines: '',
+      links: [
+        { label: '정부24에서 전입신고', url: 'https://www.gov.kr' },
+        { label: '인터넷등기소에서 확정일자', url: 'https://www.iros.go.kr' }
+      ]
     },
     {
       id: 'a4',
-      title: '계약 갱신하기(계속 거주하기)',
+      title: '임대차 신고제 대상인지 확인하기',
+      what: '보증금과 월세에 따라 임대차 신고제 대상인지 확인하는 거예요.',
+      why: '대상인데 신고하지 않으면 과태료가 부과될 수 있어요',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true
+    },
+    {
+      id: 'a4-1',
+      title: '임대차 신고제 대상인 경우 신고하기(우선변제권 확보)',
+      what: '이 집에 얼마에, 어떤 조건으로, 언제부터 언제까지 살기로 계약했다는 내용을 정부에 공식적으로 신고하는 제도에요.',
+      why: '대상자에 한에 의무이기도 하고, 임대차 신고를 하면 확정일자를 자동으로 부여해줘서 대항력을 확보했다면 우선변제권을 확보할 수 있어요.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true,
+      isImportant: true,
+      isOptional: true,
+      guidelines: '보증금 6천만원 초과 또는 월세 30만원 초과 시 의무. 신고 시 확정일자 자동 부여.',
+      links: [
+        { label: '정부24 임대차 신고', url: 'https://www.gov.kr' }
+      ]
+    },
+    {
+      id: 'a4-2',
+      title: '임대차 신고제 대상이 아닌 경우 확정일자 받기(우선변제권 확보)',
+      what: '대항력 확보 뿐만 아니라 계약서에 \'확정일자\'라는 도장을 받아서, \'내 보증금을 다른 빚쟁이들보다 먼저 돌려받을 수 있는 힘\'인 우선변제권을 확보하는 거예요.',
+      why: '그냥 이사만(전입신고) 하면, 집이 경매에 넘어갔을 때 은행 빚보다 내 보증금을 늦게 받아요. 하지만 우선변제권을 확보했다면, 내 순서가 빨라져서 은행보다 먼저 내 보증금을 챙길 수 있게 돼요.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true,
+      isOptional: true,
+      actionType: 'priority_payment',
+      actionLabel: '전입신고 및 확정일자 받기',
+      guidelines: '전입신고 후 확정일자를 받으면 우선변제권이 발생합니다.'
+    },
+    {
+      id: 'a5',
+      title: '전세보증금 반환보증 가입하기',
+      what: '전세계약이 끝났을 때 임대인이 보증금을 돌려주지 않더라도, HUG나 SGI가 대신 보증금을 먼저 지급해주는 보험이에요. 전세보증금이 위험해질 때를 대비해서 보증기관이 세입자의 돈을 대신 지켜주는 장치예요.',
+      why: '전세사기는 대부분 세입자가 계약 기간 종료 후 보증금을 못 돌려받는 상황에서 발생해요. 세입자가 통제할 수 없는 상황이 존재하기 때문에 마지막 안전망으로 가입하는 것을 권장합니다.',
+      isChecked: false,
+      isCustom: false,
+      hasTimeline: true,
+      links: [
+        { label: 'HUG 전세보증보험', url: 'https://www.khug.or.kr' },
+        { label: 'SGI 전세보증보험', url: 'https://www.sgic.co.kr' }
+      ]
+    },
+    {
+      id: 'a6',
+      title: '계약 갱신할 경우(계속 거주하기)',
       what: '이사 안 가고 이 집에 2년 더 살기로 정하는 거예요. 가만히 있으면 자동 연장(묵시적 갱신)되거나, 내가 "2년 더 살게요!"라고 요구(계약갱신청구권)할 수 있어요.',
       why: '세입자는 한 번(1회)은 집주인에게 "저 2년 더 살게요"라고 요구할 권리(계약갱신청구권)가 있어요. 이 권리를 쓰면, 집주인이 전세금을 올려도 5%까지만 올릴 수 있어서 좋아요.',
       isChecked: false,
@@ -212,19 +268,20 @@ const initialChecklists = {
       ]
     },
     {
-      id: 'a5',
-      title: '권리변동·이중계약·특약 불이행 점검하기',
-      what: '내가 이사(전입신고)하고 다음 날 0시가 되기 전 \'딱 하루\' 동안, 집주인이 몰래 은행 빚을 만들거나 집을 팔아버리는지 감시하는 거예요.',
-      why: '내가 전입신고를 해도 \'진짜 힘(대항력)\'은 다음 날 0시부터 생겨요. 그 사이에 집주인이 나쁜 맘먹고 빚을 만들면, 내 보증금이 은행 빚보다 뒷순서로 밀려날 수 있어요. 이사 당일에도 서류(등기부등본)를 꼭 다시 확인해야 해요.',
+      id: 'a7',
+      title: '계약 종료 후 이사 나갈 경우',
+      what: '계약 기간이 끝나기 전에(보통 2~6개월 전) 집주인에게 "저 이사 나갈 거예요"라고 미리 말하고, 이사 당일에 공과금(전기세 등)을 다 낸 뒤 보증금을 돌려받고 나가는 거예요.',
+      why: '이사 가겠다고 미리 말 안 하면, 집주인은 "계속 살 건가 보네?" 하고 계약이 자동으로 2년 더 연장(묵시적 갱신)될 수 있어요. 또, 보증금을 돌려받기 전에 짐을 빼거나 전입신고를 옮기면 안 돼요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
+      hasCalendar: true,
       isOptional: true,
-      guidelines: '6개월마다 등기부등본을 다시 발급받아 확인하는 것을 권장한다.'
+      guidelines: '계약 종료 2~3개월 전에 임대인에게 통보하는 것이 좋다.'
     },
     {
-      id: 'a6',
-      title: '미납국세·임금채권·전출신고 위험 관리',
+      id: 'a7-1',
+      title: '미납국세·임금채권·전출신고 위험 인지하기',
       what: '집주인이 세금(국세)을 안 냈거나, 직원들 월급을 밀렸는지 확인하고, 내가 보증금을 돌려받기 전에 다른 곳으로 이사(전출신고)하지 않도록 조심하는 거예요.',
       why: '집주인이 안 낸 세금이나 밀린 월급은, 집이 경매에 넘어가면 내 보증금보다 먼저 떼어 가요. 또, 내가 보증금 받기도 전에 이사(전출신고) 가면, 스스로 "내 보증금 포기할게요"라고 하는 것과 같아서 절대 안 돼요.',
       isChecked: false,
@@ -236,7 +293,7 @@ const initialChecklists = {
       ]
     },
     {
-      id: 'a7',
+      id: 'a7-2',
       title: '보증금 반환 지연 대비하기',
       what: '이사 나가는 날 집주인이 "지금 돈이 없네"라며 보증금을 안 돌려줄 때를 대비해서, 법적으로 내 돈을 받아낼 준비를 하는 거예요.',
       why: '집주인이 돈을 안 줄 때 가만히 있으면 안 돼요. \'내용증명\'을 보내거나, 법원에 \'임차권등기명령\'을 신청해서 "나는 아직 이 집에 대한 권리가 있다"는 걸 꼭 표시해 둬야 내 돈을 지킬 수 있어요.',
@@ -253,7 +310,7 @@ const initialChecklists = {
       id: 'a8',
       title: '임대차 신고하기',
       what: '"저 이 집이랑 얼마에, 얼마 동안 살기로 계약했어요"라고 정부(주민센터, 온라인 등)에 신고하는 거예요. **핵심: 보증금 6천만원 초과 또는 월세 30만원 초과 등 일정 금액 이상의 계약일 경우 의무예요.** 신고 시 계약서 원본을 제출해야 하며, 신고를 완료하면 **확정일자**가 자동으로 부여됩니다. (확정일자를 따로 받지 않아도 돼요.)',
-      why: '① **보증금 안전 확보 (확정일자 자동 부여):** 임대차 신고를 하면 **\'확정일자\'**가 자동으로 부여되어 **\'우선변제권\'**이 생겨요. 전입신고(대항력)와 함께 내 보증금을 다른 채권자보다 먼저 돌려받을 수 있는 법적 순위가 확보되는 거예요. ② **법적 의무 이행:** 신고 대상 계약(일정 금액 이상)인데 신고를 안 하면 법에 따라 과태료가 부과될 수 있어요.',
+      why: '① **보증금 안전 확보 (확정일자 자동 부여):** 임대차 신고를 하면 **\'확정일자\'**가 자동으로 부여되어 **\'우선변제권\'**이 생겨요. 전입신고(대항력)와 함께 내 보증금을 다른 채권자보다 먼저 돌려받을 수 있��� 법적 순위가 확보되는 거예요. ② **법적 의무 이행:** 신고 대상 계약(일정 금액 이상)인데 신고를 안 하면 법에 따라 과태료가 부과될 수 있어요.',
       isChecked: false,
       isCustom: false,
       hasTimeline: true,
@@ -297,9 +354,9 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   const [emptyJeonseResult, setEmptyJeonseResult] = useState<any>(null);
   const [knownOwnerName, setKnownOwnerName] = useState('');
   const [showOptional, setShowOptional] = useState({
-    before: false,
-    during: false,
-    after: false
+    before: true,
+    during: true,
+    after: true
   });
 
   const handleToggleCheck = (phase: ChecklistPhase, id: string) => {
@@ -533,13 +590,13 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6">
       <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-gray-900">전월세 계약 체크리스트</h2>
+        <h2 className="text-foreground">전월세 계약 체크리스트</h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleExportPDF} className="border-gray-300 text-gray-700 hover:bg-gray-50 flex-1 md:flex-initial">
+          <Button variant="outline" size="sm" onClick={handleExportPDF} className="rounded-full border-primary/30 text-primary hover:bg-primary/10 flex-1 md:flex-initial">
             <Download className="size-4 md:mr-2" />
             <span className="hidden sm:inline">PDF</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={handleSendEmail} className="border-gray-300 text-gray-700 hover:bg-gray-50 flex-1 md:flex-initial">
+          <Button variant="outline" size="sm" onClick={handleSendEmail} className="rounded-full border-primary/30 text-primary hover:bg-primary/10 flex-1 md:flex-initial">
             <Mail className="size-4 md:mr-2" />
             <span className="hidden sm:inline">메일</span>
           </Button>
@@ -547,11 +604,38 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
       </div>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChecklistPhase)}>
-        <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-100 border border-gray-200">
-          <TabsTrigger value="before" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-xs sm:text-sm">계약 전</TabsTrigger>
-          <TabsTrigger value="during" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-xs sm:text-sm">진행중</TabsTrigger>
-          <TabsTrigger value="after" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-xs sm:text-sm">계약 후</TabsTrigger>
-        </TabsList>
+        <div className="flex gap-0 mb-6 border border-gray-300 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setActiveTab('before')}
+            className={`flex-1 py-3 text-sm sm:text-base text-center transition-colors ${
+              activeTab === 'before'
+                ? 'bg-[#22909D] text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            계약 전
+          </button>
+          <button
+            onClick={() => setActiveTab('during')}
+            className={`flex-1 py-3 text-sm sm:text-base text-center border-l border-r border-gray-300 transition-colors ${
+              activeTab === 'during'
+                ? 'bg-[#22909D] text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            계약 중
+          </button>
+          <button
+            onClick={() => setActiveTab('after')}
+            className={`flex-1 py-3 text-sm sm:text-base text-center transition-colors ${
+              activeTab === 'after'
+                ? 'bg-[#22909D] text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            계약 후
+          </button>
+        </div>
 
         <TabsContent value="before" className="space-y-6">
           <ProgressBar items={checklists.before.filter(item => !item.isOptional || showOptional.before)} phase="before" />
@@ -567,16 +651,6 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             onExecuteAction={handleExecuteAction}
             onChatbot={onChatbot}
           />
-          {!showOptional.before && checklists.before.some(item => item.isOptional) && (
-            <Button
-              variant="outline"
-              className="w-full border-cyan-300 text-cyan-700 hover:bg-cyan-50"
-              onClick={() => setShowOptional(prev => ({ ...prev, before: true }))}
-            >
-              <Plus className="size-4 mr-2" />
-              더 꼼꼼히 확인하기
-            </Button>
-          )}
         </TabsContent>
 
         <TabsContent value="during" className="space-y-6">
@@ -591,16 +665,6 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             onOpenOwnerCheck={() => setShowOwnerCheck(true)}
             onChatbot={onChatbot}
           />
-          {!showOptional.during && checklists.during.some(item => item.isOptional) && (
-            <Button
-              variant="outline"
-              className="w-full border-cyan-300 text-cyan-700 hover:bg-cyan-50"
-              onClick={() => setShowOptional(prev => ({ ...prev, during: true }))}
-            >
-              <Plus className="size-4 mr-2" />
-              더 꼼꼼히 확인하기
-            </Button>
-          )}
         </TabsContent>
 
         <TabsContent value="after" className="space-y-6">
@@ -613,16 +677,6 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             onDeleteItem={handleDeleteItem}
             onChatbot={onChatbot}
           />
-          {!showOptional.after && checklists.after.some(item => item.isOptional) && (
-            <Button
-              variant="outline"
-              className="w-full border-cyan-300 text-cyan-700 hover:bg-cyan-50"
-              onClick={() => setShowOptional(prev => ({ ...prev, after: true }))}
-            >
-              <Plus className="size-4 mr-2" />
-              더 꼼꼼히 확인하기
-            </Button>
-          )}
         </TabsContent>
       </Tabs>
 
@@ -633,26 +687,26 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             <DialogTitle className="text-gray-900 flex items-center gap-2">
               내 계약서 독소조항 판단해드릴게요!
               <span className="group relative">
-                <AlertCircle className="w-4 h-4 text-cyan-600 cursor-help" />
+                <AlertCircle className="w-4 h-4 text-[#83AF3B] cursor-help" />
                 <span className="invisible group-hover:visible absolute left-0 top-6 w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg z-10">
                   독소조항: 임차인에게 일방적으로 불리한 조항 (예: 보증금 돌려줄 때 과도한 수리비 청구, 계약 해지 시 막대한 위약금, 세입자 권리 제한 등)
                 </span>
               </span>
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-muted-foreground">
               계약서 PDF를 업로드하면 AI가 독소조항과 위험 요소를 자동으로 분석합니다.
             </DialogDescription>
           </DialogHeader>
 
           {!report && !analyzing && (
-            <Card className="p-6 sm:p-8 bg-gray-50 border-gray-200">
+            <Card className="p-6 sm:p-8 bg-secondary rounded-2xl shadow-md border-border">
               <div className="text-center">
                 <div className="mb-4">
-                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center mb-4">
-                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600" />
+                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   </div>
-                  <h3 className="mb-2 text-gray-900">계약서 PDF 업로드</h3>
-                  <p className="text-sm text-gray-600 mb-4 px-4">
+                  <h3 className="mb-2 text-foreground">계약서 PDF 업로드</h3>
+                  <p className="text-sm text-muted-foreground mb-4 px-4">
                     전월세 계약서를 업로드하면 AI가 자동으로 분석합니다
                   </p>
                 </div>
@@ -664,22 +718,22 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  <span className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white cursor-pointer transition-all text-sm sm:text-base">
+                  <span className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground cursor-pointer transition-all text-sm sm:text-base font-semibold">
                     <Upload className="w-4 h-4 mr-2" />
                     파일 선택
                   </span>
                 </label>
 
                 {file && (
-                  <div className="mt-4 p-3 sm:p-4 bg-white rounded-lg text-left border border-gray-200">
+                  <div className="mt-4 p-3 sm:p-4 bg-white rounded-xl text-left border border-border shadow-sm">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-cyan-600 shrink-0" />
-                        <span className="text-sm text-gray-900 break-all">{file.name}</span>
+                        <FileText className="w-5 h-5 text-primary shrink-0" />
+                        <span className="text-sm text-foreground break-all">{file.name}</span>
                       </div>
                       <Button
                         onClick={handleAnalyze}
-                        className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto"
+                        className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
                       >
                         분석 시작
                       </Button>
@@ -691,8 +745,8 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
           )}
 
           {analyzing && (
-            <Card className="p-4 sm:p-6 bg-white border-gray-200">
-              <p className="text-sm text-gray-700 mb-3">계약서를 분석하고 있습니다...</p>
+            <Card className="p-4 sm:p-6 bg-white rounded-2xl shadow-md border-border">
+              <p className="text-sm text-foreground mb-3 font-medium">계약서를 분석하고 있습니다...</p>
               <Progress value={65} className="h-2" />
             </Card>
           )}
@@ -700,56 +754,70 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
           {report && !analyzing && (
             <div className="space-y-4 sm:space-y-6">
               {/* Risk Score */}
-              <Card className="p-4 sm:p-6 bg-white border-gray-200">
-                <h3 className="mb-4 text-gray-900">위험도 점수</h3>
+              <Card className={`p-4 sm:p-6 rounded-2xl shadow-md ${
+                report.riskScore <= 50 ? 'bg-[#E65A5A]/10 border-[#E65A5A]/30' : 
+                report.riskScore <= 80 ? 'bg-[#FFAA6A]/10 border-[#FFAA6A]/30' : 
+                'bg-[#4CA771]/10 border-[#4CA771]/30'
+              }`}>
+                <h3 className="mb-4 text-foreground">전체 안전도</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <Progress value={report.riskScore} className="h-3" />
                   </div>
-                  <span className="text-xl sm:text-2xl text-gray-900">{report.riskScore}점</span>
+                  <span className={`text-xl sm:text-2xl font-bold ${
+                    report.riskScore <= 50 ? 'text-[#E65A5A]' : 
+                    report.riskScore <= 80 ? 'text-[#FFAA6A]' : 
+                    'text-[#4CA771]'
+                  }`}>{report.riskScore}점</span>
                 </div>
-                <p className="text-sm text-gray-600 mt-2">
-                  {report.riskScore < 40 ? '안전한 계약입니다' : '검토가 필요한 항목이 있습니다'}
+                <p className={`text-sm mt-2 font-medium ${
+                  report.riskScore <= 50 ? 'text-[#E65A5A]' : 
+                  report.riskScore <= 80 ? 'text-[#FFAA6A]' : 
+                  'text-[#4CA771]'
+                }`}>
+                  {report.riskScore <= 50 ? '🚨 즉시 확인 필요!' : 
+                   report.riskScore <= 80 ? '🤔 꼼꼼히 확인하세요!' : 
+                   '✅ 안전한 계약이에요!'}
                 </p>
               </Card>
 
               {/* Key Info */}
-              <Card className="p-4 sm:p-6 bg-white border-gray-200">
-                <h3 className="mb-4 text-gray-900">주요 정보</h3>
+              <Card className="p-4 sm:p-6 bg-white rounded-2xl shadow-md border-border">
+                <h3 className="mb-4 text-foreground">주요 정보</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">보증금</p>
-                    <p className="text-gray-900">{report.deposit}</p>
+                    <p className="text-xs text-muted-foreground mb-1">보증금</p>
+                    <p className="text-foreground font-semibold">{report.deposit}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-600 mb-1">월세</p>
-                    <p className="text-gray-900">{report.monthlyRent}</p>
+                    <p className="text-xs text-muted-foreground mb-1">월세</p>
+                    <p className="text-foreground font-semibold">{report.monthlyRent}</p>
                   </div>
                 </div>
               </Card>
 
               {/* Toxic Clauses */}
               {report.toxicClauses && report.toxicClauses.length > 0 && (
-                <Card className="p-4 sm:p-6 bg-red-50 border-red-200">
+                <Card className="p-4 sm:p-6 bg-[#E65A5A]/5 rounded-2xl shadow-lg border-l-4 border-[#E65A5A]">
                   <div className="flex items-center gap-2 mb-4">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    <h3 className="text-red-900">🚨 독소조항 발견!</h3>
+                    <AlertCircle className="w-5 h-5 text-[#E65A5A]" />
+                    <h3 className="text-[#E65A5A] font-bold">🚨 [위험] 독소조항 발견!</h3>
                   </div>
-                  <p className="text-sm text-red-700 mb-4">
+                  <p className="text-sm text-[#E65A5A] mb-4 font-medium">
                     아래 조항들은 임차인에게 일방적으로 불리한 내용입니다. 계약 전 반드시 수정을 요청하세요.
                   </p>
                   <div className="space-y-4">
                     {report.toxicClauses.map((item: any, index: number) => (
-                      <div key={index} className="p-4 bg-white rounded-lg border border-red-200">
+                      <div key={index} className="p-4 bg-white rounded-xl border-l-2 border-[#E65A5A]/50 shadow-sm">
                         <div className="flex items-start gap-2 mb-2">
-                          <span className={`px-2 py-1 rounded text-xs shrink-0 ${
-                            item.risk === 'high' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
+                          <span className={`px-2 py-1 rounded-full text-xs shrink-0 font-semibold ${
+                            item.risk === 'high' ? 'bg-[#E65A5A] text-white' : 'bg-[#FFAA6A] text-white'
                           }`}>
                             {item.risk === 'high' ? '높음' : '중간'}
                           </span>
-                          <p className="text-sm text-gray-900 italic">"{item.clause}"</p>
+                          <p className="text-sm text-foreground italic">"{item.clause}"</p>
                         </div>
-                        <p className="text-xs text-red-600 ml-14">⚠️ {item.reason}</p>
+                        <p className="text-xs text-[#E65A5A] ml-14 font-medium">⚠️ {item.reason}</p>
                       </div>
                     ))}
                   </div>
@@ -758,13 +826,13 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
 
               {/* Risks */}
               {report.risks.length > 0 && (
-                <Card className="p-4 sm:p-6 bg-white border-gray-200">
-                  <h3 className="mb-4 text-gray-900">주의사항</h3>
+                <Card className="p-4 sm:p-6 bg-white rounded-2xl shadow-md border-border">
+                  <h3 className="mb-4 text-foreground">주의사항</h3>
                   <div className="space-y-3">
                     {report.risks.map((risk: any, index: number) => (
                       <div key={index} className="flex items-start gap-3">
-                        <AlertCircle className={`w-5 h-5 shrink-0 ${risk.level === 'warning' ? 'text-orange-500' : 'text-cyan-500'}`} />
-                        <p className="text-sm text-gray-700">{risk.text}</p>
+                        <AlertCircle className={`w-5 h-5 shrink-0 ${risk.level === 'warning' ? 'text-[#FFAA6A]' : 'text-primary'}`} />
+                        <p className="text-sm text-foreground">{risk.text}</p>
                       </div>
                     ))}
                   </div>
@@ -772,16 +840,16 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
               )}
 
               {/* Analysis Details */}
-              <Card className="p-4 sm:p-6 bg-white border-gray-200">
-                <h3 className="mb-4 text-gray-900">상세 분석</h3>
+              <Card className="p-4 sm:p-6 bg-white rounded-2xl shadow-md border-border">
+                <h3 className="mb-4 text-foreground">상세 분석</h3>
                 <div className="space-y-4">
                   {report.analysis.map((item: any, index: number) => (
-                    <div key={index} className="flex items-start sm:items-center justify-between pb-3 border-b border-gray-200 last:border-0 gap-2">
+                    <div key={index} className="flex items-start sm:items-center justify-between pb-3 border-b border-border last:border-0 gap-2">
                       <div className="flex items-start sm:items-center gap-3">
-                        <CheckCircle className={`w-5 h-5 shrink-0 ${item.status === 'safe' ? 'text-green-500' : 'text-orange-500'}`} />
+                        <CheckCircle className={`w-5 h-5 shrink-0 ${item.status === 'safe' ? 'text-[#4CA771]' : 'text-[#FFAA6A]'}`} />
                         <div>
-                          <p className="text-sm text-gray-900">{item.category}</p>
-                          <p className="text-xs text-gray-600">{item.value}</p>
+                          <p className="text-sm text-foreground font-medium">{item.category}</p>
+                          <p className="text-xs text-muted-foreground">{item.value}</p>
                         </div>
                       </div>
                     </div>
@@ -797,13 +865,13 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                     setFile(null);
                     setReport(null);
                   }}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50 w-full sm:flex-1"
+                  className="rounded-full border-border text-foreground hover:bg-muted w-full sm:flex-1"
                 >
                   닫기
                 </Button>
                 <Button
                   onClick={() => toast.success('보고서가 다운로드되었습니다')}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:flex-1"
+                  className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:flex-1"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   보고서 다운로드
@@ -828,8 +896,8 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             <Card className="p-6 sm:p-8 bg-gray-50 border-gray-200">
               <div className="text-center">
                 <div className="mb-4">
-                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center mb-4">
-                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600" />
+                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#83AF3B]/20 to-[#9ec590]/20 flex items-center justify-center mb-4">
+                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-[#83AF3B]" />
                   </div>
                   <h3 className="mb-2 text-gray-900">신분증 및 인감증명서 업로드</h3>
                   <p className="text-sm text-gray-600 mb-4 px-4">
@@ -854,12 +922,12 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                   <div className="mt-4 p-3 sm:p-4 bg-white rounded-lg text-left border border-gray-200">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-cyan-600 shrink-0" />
+                        <FileText className="w-5 h-5 text-[#83AF3B] shrink-0" />
                         <span className="text-sm text-gray-900 break-all">{ownerCheckFile.name}</span>
                       </div>
                       <Button
                         onClick={handleOwnerCheckAnalyze}
-                        className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto"
+                        className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto"
                       >
                         분석 시작
                       </Button>
@@ -934,7 +1002,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                 </Button>
                 <Button
                   onClick={() => toast.success('보고서가 다운로드되었습니다')}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:flex-1"
+                  className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:flex-1"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   보고서 다운로드
@@ -959,8 +1027,8 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             <Card className="p-6 sm:p-8 bg-gray-50 border-gray-200">
               <div className="text-center">
                 <div className="mb-4">
-                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center mb-4">
-                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600" />
+                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#83AF3B]/20 to-[#9ec590]/20 flex items-center justify-center mb-4">
+                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-[#83AF3B]" />
                   </div>
                   <h3 className="mb-2 text-gray-900">등기부등본 PDF 업로드</h3>
                   <p className="text-sm text-gray-600 mb-4 px-4">
@@ -985,12 +1053,12 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                   <div className="mt-4 p-3 sm:p-4 bg-white rounded-lg text-left border border-gray-200">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-5 h-5 text-cyan-600 shrink-0" />
+                        <FileText className="w-5 h-5 text-[#83AF3B] shrink-0" />
                         <span className="text-sm text-gray-900 break-all">{registryFile.name}</span>
                       </div>
                       <Button
                         onClick={handleRegistryAnalyze}
-                        className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto"
+                        className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto"
                       >
                         분석 시작
                       </Button>
@@ -1088,7 +1156,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                   <div className="space-y-3">
                     {registryResult.risks.map((risk: any, index: number) => (
                       <div key={index} className="flex items-start gap-3">
-                        <AlertCircle className={`w-5 h-5 shrink-0 ${risk.level === 'warning' ? 'text-orange-500' : 'text-cyan-500'}`} />
+                        <AlertCircle className={`w-5 h-5 shrink-0 ${risk.level === 'warning' ? 'text-orange-500' : 'text-[#83AF3B]'}`} />
                         <p className="text-sm text-gray-700">{risk.text}</p>
                       </div>
                     ))}
@@ -1118,7 +1186,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                 </Button>
                 <Button
                   onClick={() => toast.success('보고서가 다운로드되었습니다')}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:flex-1"
+                  className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:flex-1"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   보고서 다운로드
@@ -1143,8 +1211,8 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
             <Card className="p-6 sm:p-8 bg-gray-50 border-gray-200">
               <div className="text-center">
                 <div className="mb-4">
-                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center mb-4">
-                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600" />
+                  <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#83AF3B]/20 to-[#9ec590]/20 flex items-center justify-center mb-4">
+                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-[#83AF3B]" />
                   </div>
                   <h3 className="mb-2 text-gray-900">빈전세 위험 분석</h3>
                   <p className="text-sm text-gray-600 mb-4 px-4">
@@ -1159,7 +1227,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                       type="text"
                       value={emptyJeonseData.salePrice}
                       onChange={(e) => setEmptyJeonseData(prev => ({ ...prev, salePrice: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-cyan-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#83AF3B]"
                     />
                   </div>
                   <div>
@@ -1168,7 +1236,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                       type="text"
                       value={emptyJeonseData.deposit}
                       onChange={(e) => setEmptyJeonseData(prev => ({ ...prev, deposit: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-cyan-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#83AF3B]"
                     />
                   </div>
                   <div>
@@ -1177,7 +1245,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                       type="text"
                       value={emptyJeonseData.seniorDebt}
                       onChange={(e) => setEmptyJeonseData(prev => ({ ...prev, seniorDebt: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-cyan-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#83AF3B]"
                     />
                   </div>
                   <div>
@@ -1186,14 +1254,14 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                       type="text"
                       value={emptyJeonseData.seniorJeonse}
                       onChange={(e) => setEmptyJeonseData(prev => ({ ...prev, seniorJeonse: e.target.value }))}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-cyan-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#83AF3B]"
                     />
                   </div>
                 </div>
 
                 <Button
                   onClick={handleEmptyJeonseCheck}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto mt-4"
+                  className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto mt-4"
                 >
                   분석 시작
                 </Button>
@@ -1285,7 +1353,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
                 </Button>
                 <Button
                   onClick={() => toast.success('보고서가 다운로드되었습니다')}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:flex-1"
+                  className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:flex-1"
                 >
                   <Download className="w-4 h-4 mr-2" />
                   보고서 다운로드

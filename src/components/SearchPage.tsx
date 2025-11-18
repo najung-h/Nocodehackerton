@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { toast } from 'sonner';
+import searchImage from "figma:asset/183c1031e148483d35585f93e39c1e87fcdc52d9.png";
 
 interface SearchPageProps {
   onBack: () => void;
@@ -67,14 +68,14 @@ export function SearchPage({ onBack }: SearchPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-lime-50 to-green-50">
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 max-w-4xl">
         {/* Top Navigation */}
         <div className="flex items-center justify-between mb-4">
           <Button
             onClick={onBack}
             variant="ghost"
-            className="text-amber-700 hover:text-amber-900"
+            className="text-gray-700 hover:text-gray-900"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             메인으로
@@ -82,7 +83,7 @@ export function SearchPage({ onBack }: SearchPageProps) {
           <Button 
             onClick={() => toast.info('로그인 기능은 준비 중입니다')}
             variant="outline"
-            className="border-cyan-500 text-cyan-700 hover:bg-cyan-50 flex items-center gap-2"
+            className="border-[#83AF3B] text-[#83AF3B] hover:bg-[#83AF3B]/10 flex items-center gap-2"
           >
             <LogIn className="w-4 h-4" />
             <span className="hidden sm:inline">로그인</span>
@@ -90,34 +91,38 @@ export function SearchPage({ onBack }: SearchPageProps) {
         </div>
 
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center">
-              <Book className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-600" />
+        <div className="mb-6 sm:mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex items-center justify-center">
+              <img
+                src={searchImage}
+                alt="똑똑한 법률 사전"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <h1 className="text-amber-900">판례/법률 검색</h1>
+            <h1 className="text-gray-900">똑똑한 법률 사전</h1>
           </div>
-          <p className="text-sm text-amber-700">
-            궁금한 전월세 분쟁이나 법령을 한 번에 찾아보세요.
+          <p className="text-sm text-gray-700">
+            궁금한 건 언제든 물어봐!
           </p>
         </div>
 
         {/* Search Input */}
         <div className="flex flex-col sm:flex-row gap-2 mb-6 sm:mb-8">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-amber-500" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#83AF3B]" />
             <Input
               type="text"
               placeholder="예: 확정일자, 전세사기, 보증금 반환"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="pl-10 bg-white border-amber-200 focus:border-cyan-400"
+              className="pl-10 bg-white border-gray-300 focus:border-[#83AF3B]"
             />
           </div>
           <Button
             onClick={handleSearch}
-            className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto"
+            className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto"
           >
             검색
           </Button>
@@ -129,20 +134,20 @@ export function SearchPage({ onBack }: SearchPageProps) {
             {results.map((result, index) => (
               <Card 
                 key={index} 
-                className="p-4 sm:p-6 bg-white border-amber-100 hover:border-cyan-300 transition-colors cursor-pointer"
+                className="p-4 sm:p-6 bg-white border-gray-200 hover:border-[#83AF3B] transition-colors cursor-pointer"
                 onClick={() => setSelectedResult(result)}
               >
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-                  <div className="px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs shrink-0 self-start">
+                  <div className="px-3 py-1 rounded-full bg-[#83AF3B]/20 text-[#83AF3B] text-xs shrink-0 self-start">
                     {result.type}
                   </div>
                   <div className="flex-1">
-                    <h3 className="mb-2 text-amber-900 flex items-center gap-2">
+                    <h3 className="mb-2 text-gray-900 flex items-center gap-2">
                       {result.title}
-                      <ExternalLink className="w-4 h-4 text-cyan-500" />
+                      <ExternalLink className="w-4 h-4 text-[#83AF3B]" />
                     </h3>
-                    <p className="text-sm text-amber-700 mb-3">{result.content}</p>
-                    <p className="text-xs text-amber-500">{result.reference}</p>
+                    <p className="text-sm text-gray-700 mb-3">{result.content}</p>
+                    <p className="text-xs text-gray-600">{result.reference}</p>
                   </div>
                 </div>
               </Card>
@@ -151,7 +156,7 @@ export function SearchPage({ onBack }: SearchPageProps) {
         )}
 
         {results.length === 0 && searchQuery === '' && (
-          <div className="text-center py-12 text-amber-600 px-4">
+          <div className="text-center py-12 text-gray-600 px-4">
             <p>검색어를 입력하면 관련 판례와 법률을 찾아드립니다.</p>
           </div>
         )}
@@ -162,15 +167,15 @@ export function SearchPage({ onBack }: SearchPageProps) {
         <DialogContent className="max-w-[90vw] sm:max-w-3xl max-h-[80vh] overflow-y-auto bg-white">
           <DialogHeader>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-              <div className="px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-xs self-start">
+              <div className="px-3 py-1 rounded-full bg-[#83AF3B]/20 text-[#83AF3B] text-xs self-start">
                 {selectedResult?.type}
               </div>
               {selectedResult?.date && (
-                <span className="text-xs text-amber-500">{selectedResult.date}</span>
+                <span className="text-xs text-gray-600">{selectedResult.date}</span>
               )}
             </div>
-            <DialogTitle className="text-amber-900">{selectedResult?.title}</DialogTitle>
-            <DialogDescription className="text-sm text-amber-600">
+            <DialogTitle className="text-gray-900">{selectedResult?.title}</DialogTitle>
+            <DialogDescription className="text-sm text-gray-600">
               {selectedResult?.reference}
               {selectedResult?.court && ` | ${selectedResult.court}`}
             </DialogDescription>
@@ -178,22 +183,22 @@ export function SearchPage({ onBack }: SearchPageProps) {
           
           <div className="mt-6">
             <div className="prose prose-sm max-w-none">
-              <div className="whitespace-pre-wrap text-sm text-amber-800 leading-relaxed">
+              <div className="whitespace-pre-wrap text-sm text-gray-800 leading-relaxed">
                 {selectedResult?.fullContent || selectedResult?.content}
               </div>
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-amber-100 flex flex-col sm:flex-row justify-end gap-2">
+          <div className="mt-6 pt-4 border-t border-gray-200 flex flex-col sm:flex-row justify-end gap-2">
             <Button
               variant="outline"
               onClick={() => setSelectedResult(null)}
-              className="border-amber-200 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
+              className="border-gray-300 text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
             >
               닫기
             </Button>
             <Button
-              className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white w-full sm:w-auto"
+              className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               원문 보기
