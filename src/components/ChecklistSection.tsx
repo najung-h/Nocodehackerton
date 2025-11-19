@@ -559,32 +559,37 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   };
 
   const handleExecuteAction = (actionType: string) => {
-    // MCP 도구와 연동하여 실제 행정 액션 실행
     toast.loading('액션을 실행하고 있습니다...', { id: actionType });
 
-    // 액션 타입별로 다른 처리
-    setTimeout(() => {
-      switch (actionType) {
-        case 'molit_price_check':
-          toast.success('실거래가 조회가 완료되었습니다!', { id: actionType });
-          // 실제로는 MCP를 통해 국토교통부 API 호출
-          break;
-        case 'insurance_check':
-          toast.success('보증보험 가입 가능 여부 확인이 완료되었습니다!', { id: actionType });
-          // 실제로는 MCP를 통해 HUG/SGI API 호출
-          break;
-        case 'registry_check':
-          toast.success('등기부등본 자동 조회가 완료되었습니다!', { id: actionType });
-          // 실제로는 MCP를 통해 인터넷등기소 API 호출
-          break;
-        case 'priority_payment':
-          toast.success('전입신고 및 확정일자 신청이 완료되었습니다!', { id: actionType });
-          // 실제로는 MCP를 통해 정부24 API 호출
-          break;
-        default:
-          toast.error('지원하지 않는 액션입니다', { id: actionType });
+    // ❗️ 모든 체크리스트 액션을 처리할 단일 "마스터" Webhook URL
+    const masterWebhookUrl = 'master_webhook_url'; // TODO: 실제 마스터 웹훅 URL로 교체
+
+    fetch(masterWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // 'actionType'을 body에 담아 n8n으로 전송합니다.
+      body: JSON.stringify({
+        action: actionType,
+        // 필요하다면 다른 데이터도 함께 보낼 수 있습니다.
+        // 예: checklistId: id
+      }),
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
       }
-    }, 2000);
+      throw new Error('Webhook 호출에 실패했습니다.');
+    })
+    .then(data => {
+      // n8n에서 보낸 메시지로 토스트 알림을 띄웁니다.
+      toast.success(data.message || '액션이 성공적으로 완료되었습니다!', { id: actionType });
+    })
+    .catch(error => {
+      console.error('n8n workflow 실행 중 오류:', error);
+      toast.error('액션 실행 중 오류가 발생했습니다.', { id: actionType });
+    });
   };
 
   return (

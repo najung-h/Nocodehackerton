@@ -68,51 +68,43 @@ export function DocumentUploadSection({
     setIsUploading(true);
     setUploadProgress(0);
 
-    // 업로드 진행 시뮬레이션
+    // ❗️ 문서 분석을 처리할 n8n의 Webhook URL
+    const analysisWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_DOCUMENT_ANALYSIS_WEBHOOK_ID'; // TODO: 실제 웹훅 URL로 교체
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // 업로드 진행 시뮬레이션 (fetch는 기본적으로 진행률을 제공하지 않으므로)
     const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 10;
-      });
+      setUploadProgress((prev) => (prev < 90 ? prev + 10 : prev));
     }, 200);
 
-    // AI 분석 시뮬레이션 (2초)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch(analysisWebhookUrl, {
+        method: 'POST',
+        body: formData, // FormData를 사용하면 Content-Type은 브라우저가 자동으로 설정합니다.
+      });
 
-    clearInterval(interval);
-    setUploadProgress(100);
-    setIsUploading(false);
+      clearInterval(interval);
+      setUploadProgress(100);
 
-    // Mock 분석 결과
-    const mockReport: AnalysisReport = {
-      fileName: file.name,
-      checkedItems: [
-        "등기부등본 확인하기",
-        "임대인 확인하기",
-        "신탁등기 전세사기 예방하기",
-      ],
-      findings: [
-        {
-          type: "info",
-          message: "계약서 형식이 표준 계약서와 일치합니다",
-        },
-        {
-          type: "warning",
-          message: "특약사항 3개 발견: 검토가 필요합니다",
-        },
-        {
-          type: "info",
-          message:
-            "등기부등본상 소유자와 임대인 정보가 일치합니다",
-        },
-      ],
-    };
+      if (!response.ok) {
+        throw new Error('문서 분석에 실패했습니다.');
+      }
 
-    toast.success("문서 분석이 완료되었습니다!");
-    onAnalysisComplete(mockReport);
+      const report: AnalysisReport = await response.json();
+
+      toast.success("문서 분석이 완료되었습니다!");
+      onAnalysisComplete(report);
+
+    } catch (error) {
+      clearInterval(interval);
+      setUploadProgress(0);
+      console.error('문서 분석 중 오류 발생:', error);
+      toast.error('문서 분석 중 오류가 발생했습니다.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleRemoveFile = () => {

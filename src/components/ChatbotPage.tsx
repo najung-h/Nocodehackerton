@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Send, LogIn } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -24,26 +24,68 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       role: "user",
       content: input,
     };
-    setMessages([...messages, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
+    setInput("");
+    setIsLoading(true);
 
-    // 더미 응답
-    setTimeout(() => {
+    // ❗️ 챗봇 응답을 처리할 n8n Webhook URL
+    const chatbotWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_CHATBOT_WEBHOOK_ID'; // TODO: 실제 웹훅 URL로 교체
+
+    try {
+      const response = await fetch(chatbotWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: currentInput,
+          // 필요하다면 이전 대화 기록이나 사용자 정보를 함께 보낼 수 있습니다.
+          // history: messages 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('챗봇 응답을 가져오는데 실패했습니다.');
+      }
+
+      const data = await response.json();
+
+      // n8n에서 { "response": "..." } 형태의 응답을 기대합니다.
       const assistantMessage: Message = {
         role: "assistant",
-        content: `"${input}"에 대한 답변입니다.\n\n확정일자는 전월세 계약서에 날인되는 도장으로, 임차인의 우선변제권을 보장하는 중요한 제도입니다. 계약 체결 후 주민센터나 등기소에서 무료로 받을 수 있으며, 전입신고와 함께 꼭 받으셔야 합니다.`,
+        content: data.response || "죄송합니다. 답변을 생성할 수 없습니다.",
       };
       setMessages((prev) => [...prev, assistantMessage]);
-    }, 1000);
 
-    setInput("");
+    } catch (error) {
+      console.error('챗봇 Webhook 호출 중 오류 발생:', error);
+      const errorMessage: Message = {
+        role: "assistant",
+        content: "죄송합니다. 오류가 발생하여 답변을 드릴 수 없습니다. 잠시 후 다시 시도해주세요.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -89,7 +131,7 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
         </div>
 
         {/* Chat Container */}
-        <Card className="bg-white border-gray-200 overflow-hidden">
+        <Card className="bg-white border-gray-200 overflow-hidden flex flex-col">
           {/* Messages */}
           <div
             className="h-[400px] sm:h-[500px] overflow-y-auto p-4 sm:p-6 space-y-4"
@@ -124,6 +166,25 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex flex-row gap-2 sm:gap-3">
+                <div className="shrink-0 w-9 h-9">
+                  <img
+                    src={chatbotImage}
+                    alt="AI 비서"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="max-w-[75%] sm:max-w-[70%] rounded-2xl px-3 sm:px-4 py-2 sm:py-3 bg-accent/20 text-foreground">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-150"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
@@ -135,6 +196,7 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
                 size="sm"
                 onClick={() => setInput("확정일자 안 받으면 어떻게 되나요?")}
                 className="text-xs bg-white border-[#83AF3B] text-[#83AF3B] hover:bg-[#83AF3B]/10 hover:border-[#83AF3B]"
+                disabled={isLoading}
               >
                 확정일자 안 받으면 어떻게 되나요?
               </Button>
@@ -143,6 +205,7 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
                 size="sm"
                 onClick={() => setInput("전세사기 위험징후는 뭘까요?")}
                 className="text-xs bg-white border-[#83AF3B] text-[#83AF3B] hover:bg-[#83AF3B]/10 hover:border-[#83AF3B]"
+                disabled={isLoading}
               >
                 전세사기 위험징후는 뭘까요?
               </Button>
@@ -151,6 +214,7 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
                 size="sm"
                 onClick={() => setInput("반전세는 뭘까요?")}
                 className="text-xs bg-white border-[#83AF3B] text-[#83AF3B] hover:bg-[#83AF3B]/10 hover:border-[#83AF3B]"
+                disabled={isLoading}
               >
                 반전세는 뭘까요?
               </Button>
@@ -159,17 +223,19 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
             <div className="flex gap-2">
               <Input
                 type="text"
-                placeholder="궁금한 점을 물어보세요..."
+                placeholder={isLoading ? "답변을 생성하고 있습니다..." : "궁금한 점을 물어보세요..."}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) =>
                   e.key === "Enter" && handleSend()
                 }
                 className="flex-1 bg-white border-gray-300 focus:border-[#83AF3B] text-sm"
+                disabled={isLoading}
               />
               <Button
                 onClick={handleSend}
                 className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white shrink-0"
+                disabled={isLoading}
               >
                 <Send className="w-4 h-4" />
               </Button>

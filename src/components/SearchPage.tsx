@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ArrowLeft, Book, ExternalLink, LogIn } from 'lucide-react';
+import { Search, ArrowLeft, Book, ExternalLink, LogIn, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
@@ -25,45 +25,55 @@ export function SearchPage({ onBack }: SearchPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = () => {
-    // RAG 기반 검색 로직 (현재는 더미 데이터)
-    if (searchQuery.trim()) {
+  const handleSearch = async () => {
+    if (!searchQuery.trim() || isSearching) return;
+
+    setIsSearching(true);
+    setResults([]); // Clear previous results
+    toast.loading("검색 중입니다...");
+
+    const searchWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_SEARCH_WEBHOOK_ID'; // TODO: 실제 검색 웹훅 URL로 교체
+
+    try {
+      const response = await fetch(searchWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery }),
+      });
+
+      if (!response.ok) {
+        throw new Error('검색에 실패했습니다.');
+      }
+
+      const searchResults: SearchResult[] = await response.json();
+      
+      if (searchResults.length === 0) {
+        toast.info("검색 결과가 없습니다.");
+      } else {
+        toast.success(`${searchResults.length}개의 결과를 찾았습니다.`);
+      }
+      setResults(searchResults);
+
+    } catch (error) {
+      console.error('검색 중 오류 발생:', error);
+      toast.error('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
+      // For demonstration, falling back to dummy data on error
       setResults([
         {
           type: '판례',
-          title: '전세보증금 반환 청구 사건',
+          title: '전세보증금 반환 청구 사건 (에러 발생 시 예시)',
           content: '임대차 계약 종료 후 임대인이 보증금을 반환하지 않을 경우...',
           reference: '대법원 2023다12345',
           date: '2023. 5. 15.',
           court: '대법원',
           fullContent: `【판시사항】
-임대차계약이 종료된 후 임차인이 임대인에게 목적물을 반환하였음에도 임대인이 보증금을 반환하지 않는 경우, 임차인은 보증금 반환청구권을 행사할 수 있습니다.
-
-【판결요지】
-1. 임대차계약이 종료되면 임대인은 임차인에게 보증금을 반환할 의무가 있습니다.
-2. 임차인이 목적물을 명도하였다면, 특별한 사정이 없는 한 임대인은 지체 없이 보증금을 반환하여야 합니다.
-3. 임대인이 보증금 반환을 지체하는 경우, 임차인은 지연손해금을 청구할 수 있습니다.
-
-【참조조문】
-민법 제618조, 주택임대차보호법 제3조
-
-【참조판례】
-대법원 2020다234567 판결`,
-        },
-        {
-          type: '법령',
-          title: '주택임대차보호법 제3조 (대항력 등)',
-          content: '임차인이 주택의 인도와 주민등록을 마친 때에는...',
-          reference: '주택임대차보호법',
-          fullContent: `제3조(대항력 등)
-① 임대차는 그 등기가 없는 경우에도 임차인이 주택의 인도와 주민등록을 마친 때에는 그 다음 날부터 제3자에 대하여 효력이 생긴다.
-
-② 임차인은 임차주택을 양수인에게 인도하고 보증금을 반환받을 때까지는 양수인에게 대항할 수 있다.
-
-③ 제1항의 대항요건을 갖춘 임차인은 민사집행법에 따른 경매 또는 국세징수법에 따른 공매 시 임차주택(대지를 포함한다)의 환가대금에서 후순위권리자나 그 밖의 채권자보다 우선하여 보증금을 변제받을 권리가 있다.`,
+임대차계약이 종료된 후 임차인이 임대인에게 목적물을 반환하였음에도 임대인이 보증금을 반환하지 않는 경우, 임차인은 보증금 반환청구권을 행사할 수 있습니다.`,
         },
       ]);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -118,13 +128,15 @@ export function SearchPage({ onBack }: SearchPageProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               className="pl-10 bg-white border-gray-300 focus:border-[#83AF3B]"
+              disabled={isSearching}
             />
           </div>
           <Button
             onClick={handleSearch}
             className="bg-gradient-to-r from-[#83AF3B] to-[#9ec590] hover:from-[#6f9632] hover:to-[#83AF3B] text-white w-full sm:w-auto"
+            disabled={isSearching}
           >
-            검색
+            {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : '검색'}
           </Button>
         </div>
 
@@ -155,7 +167,7 @@ export function SearchPage({ onBack }: SearchPageProps) {
           </div>
         )}
 
-        {results.length === 0 && searchQuery === '' && (
+        {!isSearching && results.length === 0 && (
           <div className="text-center py-12 text-gray-600 px-4">
             <p>검색어를 입력하면 관련 판례와 법률을 찾아드립니다.</p>
           </div>

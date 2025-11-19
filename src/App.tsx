@@ -32,14 +32,44 @@ type Page =
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showChatDialog, setShowChatDialog] = useState(false);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    toast.success("로그인되었습니다");
+  const handleLogin = async () => {
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
+    toast.loading("로그인 중...");
+
+    const loginWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_LOGIN_WEBHOOK_ID'; // TODO: 실제 로그인 웹훅 URL로 교체
+
+    try {
+      // 실제 앱에서는 사용자 이름, 비밀번호 등을 body에 담아 보냅니다.
+      const response = await fetch(loginWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: 'demo-user', pass: 'demo-pass' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('로그인에 실패했습니다.');
+      }
+
+      // n8n에서 성공 응답을 받았다고 가정
+      // const data = await response.json(); // 예: 토큰 등 수신
+      
+      setIsLoggedIn(true);
+      toast.success("로그인되었습니다");
+
+    } catch (error) {
+      console.error('로그인 중 오류 발생:', error);
+      toast.error('로그인에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   const handleLogout = () => {
+    // 실제 앱에서는 n8n의 로그아웃 웹훅을 호출하여 세션을 무효화할 수 있습니다.
     setIsLoggedIn(false);
     toast.success("로그아웃되었습니다");
   };
@@ -263,12 +293,14 @@ export default function App() {
                     onClick={handleLogin}
                     variant="ghost"
                     className="text-sm text-gray-600 hover:text-gray-900"
+                    disabled={isLoggingIn}
                   >
                     로그인
                   </Button>
                   <Button
                     onClick={handleLogin}
                     className="bg-[#83AF3B] hover:bg-[#6f9632] text-white text-sm rounded-full px-4"
+                    disabled={isLoggingIn}
                   >
                     회원가입
                   </Button>
