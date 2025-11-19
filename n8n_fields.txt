@@ -1,0 +1,24 @@
+action (ChecklistSection.tsx에서 Switch 노드 분기용)
+molit_price_check
+insurance_check
+registry_check
+priority_payment
+
+query (ChatbotPage.tsx 및 SearchPage.tsx에서 챗봇 질문/검색어)
+
+user (App.tsx 로그인 시 사용자명)
+pass (App.tsx 로그인 시 비밀번호)
+
+file (DocumentUploadSection.tsx 및 PropertySection.tsx에서 파일 업로드 시)
+doc_type (DocumentUploadSection.tsx에서 문서 유형)
+issued_at (DocumentUploadSection.tsx에서 발급일)
+property_id (DocumentUploadSection.tsx 및 PropertySection.tsx에서 주택 ID)
+address (PropertySection.tsx에서 주택 주소)
+
+conversationId (ConversationSection.tsx에서 메시지 전송 시 대화 ID)
+content (ConversationSection.tsx에서 메시지 내용)
+
+id (LinkSection.tsx에서 링크 수정/삭제 시 링크 ID)
+name (LinkSection.tsx에서 링크 이름)
+url (LinkSection.tsx에서 링크 URL)
+description (LinkSection.tsx에서 링크 설명)
