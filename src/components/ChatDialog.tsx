@@ -61,17 +61,17 @@ export function ChatDialog({ open, onOpenChange }: ChatDialogProps) {
     setInputValue('');
     setIsTyping(true);
 
-    // '대화' 기능 통합 웹훅 사용
-    const conversationManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-conversations'; // TODO: 실제 통합 웹훅 URL로 교체
+    // gemini.md 기반 서비스 URL
+    const chatServiceUrl = '/chat-service'; // TODO: 실제 챗 서비스 URL로 교체
 
     try {
-      const response = await fetch(conversationManagerWebhook, {
+      const response = await fetch(chatServiceUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          action: 'new_query', // 액션 구분자 추가
+          action: 'new_query', // 액션 구분자
           query: currentInput 
         }),
       });

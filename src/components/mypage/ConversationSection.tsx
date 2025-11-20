@@ -14,14 +14,18 @@ export function ConversationSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
-  // '대화' 기능 통합 웹훅
-  const conversationManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-conversations'; // TODO: 실제 통합 웹훅 URL로 교체
+  // gemini.md 기반 서비스 URL
+  const chatServiceUrl = '/chat-service'; // TODO: 실제 챗 서비스 URL로 교체
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(conversationManagerWebhook); // 통합 웹훅 GET
+        const response = await fetch(chatServiceUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_history' }),
+        });
         if (!response.ok) throw new Error('Failed to fetch conversations');
         const data = await response.json();
         setConversations(data.conversations || []);
@@ -47,11 +51,11 @@ export function ConversationSection() {
     setIsSending(true);
 
     try {
-      const response = await fetch(conversationManagerWebhook, { // 통합 웹훅 POST
+      const response = await fetch(chatServiceUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'send_message', // 액션 구분자 추가
+          action: 'send_message',
           conversationId: selectedConv,
           content: messageInput,
         }),

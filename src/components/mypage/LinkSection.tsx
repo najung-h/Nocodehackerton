@@ -22,13 +22,17 @@ export function LinkSection() {
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [formData, setFormData] = useState({ name: '', url: '', description: '' });
 
-  // '링크' 기능 통합 웹훅
-  const linkManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-links'; // TODO: 실제 통합 웹훅 URL로 교체
+  // gemini.md 기반 서비스 URL
+  const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
 
   const fetchLinks = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(linkManagerWebhook); // 통합 웹훅 GET
+      const response = await fetch(checklistServiceUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_links' }),
+      });
       if (!response.ok) throw new Error('Failed to fetch links');
       const data = await response.json();
       setLinks(data || []);
@@ -63,11 +67,18 @@ export function LinkSection() {
     }
     setIsSubmitting(true);
     
+    const action = editingLink ? 'update_link' : 'create_link';
+    const body = {
+      action,
+      id: editingLink?.id,
+      ...formData
+    };
+
     try {
-      const response = await fetch(linkManagerWebhook, { // 통합 웹훅 사용
-        method: editingLink ? 'PUT' : 'POST', // 기존 로직 유지
+      const response = await fetch(checklistServiceUrl, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingLink?.id, ...formData }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) throw new Error('Save failed');
       
@@ -84,10 +95,10 @@ export function LinkSection() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(linkManagerWebhook, { // 통합 웹훅 사용
-        method: 'DELETE',
+      const response = await fetch(checklistServiceUrl, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ action: 'delete_link', id }),
       });
       if (!response.ok) throw new Error('Delete failed');
 

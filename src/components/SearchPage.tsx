@@ -34,13 +34,17 @@ export function SearchPage({ onBack }: SearchPageProps) {
     setResults([]); // Clear previous results
     toast.loading("검색 중입니다...");
 
-    const searchWebhook = 'https://ajjoona.app.n8n.cloud/webhook/search-documents'; // TODO: 실제 웹훅 URL로 교체
+    // gemini.md 기반 서비스 URL
+    const chatServiceUrl = '/chat-service'; // TODO: 실제 챗 서비스 URL로 교체
 
     try {
-      const response = await fetch(searchWebhook, {
+      const response = await fetch(chatServiceUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: searchQuery }),
+        body: JSON.stringify({
+          action: 'search', // 액션 구분자
+          query: searchQuery
+        }),
       });
 
       if (!response.ok) {

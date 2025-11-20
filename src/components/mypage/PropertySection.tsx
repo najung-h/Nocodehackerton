@@ -25,13 +25,18 @@ export function PropertySection() {
   const [uploadPropertyId, setUploadPropertyId] = useState<number | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
 
-  // 기능별로 통합된 단일 웹훅 URL
-  const propertyWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/manage-properties'; // TODO: 실제 통합 웹훅 URL로 교체
+  // gemini.md 기반 서비스 URL
+  const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
+  const documentServiceUrl = '/document-service';   // TODO: 실제 문서 서비스 URL로 교체
 
   const fetchProperties = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(propertyWebhookUrl); // GET 요청
+      const response = await fetch(checklistServiceUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_properties' }),
+      });
       if (!response.ok) throw new Error('Failed to fetch properties');
       const data = await response.json();
       setProperties(data || []);
@@ -54,12 +59,12 @@ export function PropertySection() {
     }
     setIsSubmitting(true);
     try {
-      const response = await fetch(propertyWebhookUrl, { // 통합 웹훅 사용
+      const response = await fetch(checklistServiceUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          action: 'add_property', // 액션 구분자 추가
-          address: newAddress 
+        body: JSON.stringify({
+          action: 'add_property',
+          address: newAddress
         }),
       });
       if (!response.ok) throw new Error('Failed to add property');
@@ -89,12 +94,15 @@ export function PropertySection() {
     setIsSubmitting(true);
     
     const formData = new FormData();
-    formData.append('action', 'upload_document'); // 액션 구분자 추가
+    // gemini.md에 따르면 Document Service는 'scan' 또는 'analyze' 액션을 받습니다.
+    // 여기서는 범용적인 업로드이므로 'upload_for_property' 같은 액션을 새로 정의하거나
+    // 기존 'scan'을 활용할 수 있습니다. 여기서는 'scan'을 사용합니다.
+    formData.append('action', 'scan'); 
     formData.append('file', fileToUpload);
     formData.append('property_id', String(uploadPropertyId));
 
     try {
-      const response = await fetch(propertyWebhookUrl, { // 통합 웹훅 사용
+      const response = await fetch(documentServiceUrl, {
         method: 'POST',
         body: formData,
       });

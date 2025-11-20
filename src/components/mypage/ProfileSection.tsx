@@ -21,10 +21,14 @@ export function ProfileSection({ isLoggedIn, onLogout }: ProfileSectionProps) {
         return;
       }
       setIsLoading(true);
-      // '사용자' 기능 통합 웹훅
-      const userManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-users'; // TODO: 실제 통합 웹훅 URL로 교체
+      // gemini.md 기반 서비스 URL
+      const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
       try {
-        const response = await fetch(userManagerWebhook); // 통합 웹훅 GET
+        const response = await fetch(checklistServiceUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_profile' }),
+        });
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setUser(data);

@@ -561,10 +561,10 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   const handleExecuteAction = (actionType: string) => {
     toast.loading('액션을 실행하고 있습니다...', { id: actionType });
 
-    // '체크리스트' 기능 통합 웹훅
-    const checklistManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-checklists'; // TODO: 실제 통합 웹훅 URL로 교체
+    // gemini.md 기반 서비스 URL
+    const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
 
-    fetch(checklistManagerWebhook, {
+    fetch(checklistServiceUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

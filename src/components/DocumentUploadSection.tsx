@@ -68,11 +68,11 @@ export function DocumentUploadSection({
     setIsUploading(true);
     setUploadProgress(0);
 
-    // '문서' 기능 통합 웹훅 사용
-    const documentManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-documents'; // TODO: 실제 통합 웹훅 URL로 교체
+    // gemini.md 기반 서비스 URL
+    const documentServiceUrl = '/document-service'; // TODO: 실제 문서 서비스 URL로 교체
 
     const formData = new FormData();
-    formData.append('action', 'analyze_document'); // 액션 구분자
+    formData.append('action', 'analyze'); // gemini.md에 명시된 'analyze' 액션
     formData.append('file', file);
 
     // 업로드 진행 시뮬레이션 (fetch는 기본적으로 진행률을 제공하지 않으므로)
@@ -81,7 +81,7 @@ export function DocumentUploadSection({
     }, 200);
 
     try {
-      const response = await fetch(documentManagerWebhook, {
+      const response = await fetch(documentServiceUrl, {
         method: 'POST',
         body: formData, // FormData를 사용하면 Content-Type은 브라우저가 자동으로 설정합니다.
       });

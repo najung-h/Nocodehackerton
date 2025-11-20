@@ -28,14 +28,18 @@ export function DocumentSection() {
   const [uploadPropertyId, setUploadPropertyId] = useState('');
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
-  // '문서' 기능 통합 웹훅
-  const documentManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-documents'; // TODO: 실제 통합 웹훅 URL로 교체
+  // gemini.md 기반 서비스 URL
+  const documentServiceUrl = '/document-service'; // TODO: 실제 문서 서비스 URL로 교체
 
   useEffect(() => {
     const fetchDocuments = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(documentManagerWebhook); // 통합 웹훅 GET
+        const response = await fetch(documentServiceUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_documents' }),
+        });
         if (!response.ok) throw new Error('Failed to fetch documents');
         const data = await response.json();
         setDocuments(data || []);
@@ -57,14 +61,17 @@ export function DocumentSection() {
     setIsUploading(true);
     
     const formData = new FormData();
-    formData.append('action', 'upload_document'); // 액션 구분자
+    // gemini.md에 따르면 Document Service는 'scan' 또는 'analyze' 액션을 받습니다.
+    // 여기서는 범용적인 업로드이므로 'upload_for_property' 같은 액션을 새로 정의하거나
+    // 기존 'scan'을 활용할 수 있습니다. 여기서는 'scan'을 사용합니다.
+    formData.append('action', 'scan');
     formData.append('file', uploadFile);
     formData.append('doc_type', uploadDocType);
     formData.append('issued_at', uploadIssuedAt);
     formData.append('property_id', uploadPropertyId);
 
     try {
-      const response = await fetch(documentManagerWebhook, { // 통합 웹훅 POST
+      const response = await fetch(documentServiceUrl, {
         method: 'POST',
         body: formData,
       });

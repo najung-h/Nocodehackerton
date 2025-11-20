@@ -40,16 +40,16 @@ export default function App() {
     setIsLoggingIn(true);
     toast.loading("로그인 중...");
 
-    // '사용자' 기능 통합 웹훅
-    const userManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-users'; // TODO: 실제 통합 웹훅 URL로 교체
+    // gemini.md 기반 서비스 URL
+    const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
 
     try {
       // 실제 앱에서는 사용자 이름, 비밀번호 등을 body에 담아 보냅니다.
-      const response = await fetch(userManagerWebhook, {
+      const response = await fetch(checklistServiceUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          action: 'login_or_signup', // 액션 구분자 추가
+        body: JSON.stringify({
+          action: 'login_or_signup', // 액션 구분자
           user: 'demo-user', 
           pass: 'demo-pass' 
         }),
