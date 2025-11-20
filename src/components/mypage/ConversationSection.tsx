@@ -15,7 +15,7 @@ export function ConversationSection() {
   const [isSending, setIsSending] = useState(false);
 
   // gemini.md 기반 서비스 URL
-  const chatServiceUrl = '/chat-service'; // TODO: 실제 챗 서비스 URL로 교체
+  const chatServiceUrl = import.meta.env.VITE_CHAT_SERVICE_URL; // TODO: 실제 챗 서비스 URL로 교체
 
   useEffect(() => {
     const fetchData = async () => {

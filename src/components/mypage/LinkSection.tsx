@@ -23,7 +23,7 @@ export function LinkSection() {
   const [formData, setFormData] = useState({ name: '', url: '', description: '' });
 
   // gemini.md 기반 서비스 URL
-  const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
+  const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL; // 실제 체크리스트 서비스 URL로 교체
 
   const fetchLinks = async () => {
     setIsLoading(true);

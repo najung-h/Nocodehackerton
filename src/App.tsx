@@ -41,7 +41,7 @@ export default function App() {
     toast.loading("로그인 중...");
 
     // gemini.md 기반 서비스 URL
-    const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
+    const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL; // TODO: 실제 체크리스트 서비스 URL로 교체
 
     try {
       // 실제 앱에서는 사용자 이름, 비밀번호 등을 body에 담아 보냅니다.

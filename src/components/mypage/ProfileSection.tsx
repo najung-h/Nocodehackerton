@@ -22,7 +22,7 @@ export function ProfileSection({ isLoggedIn, onLogout }: ProfileSectionProps) {
       }
       setIsLoading(true);
       // gemini.md 기반 서비스 URL
-      const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
+      const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL; // TODO: 실제 체크리스트 서비스 URL로 교체
       try {
         const response = await fetch(checklistServiceUrl, {
           method: 'POST',

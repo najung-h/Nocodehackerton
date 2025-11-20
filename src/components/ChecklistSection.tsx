@@ -562,7 +562,7 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
     toast.loading('액션을 실행하고 있습니다...', { id: actionType });
 
     // gemini.md 기반 서비스 URL
-    const checklistServiceUrl = '/checklist-service'; // TODO: 실제 체크리스트 서비스 URL로 교체
+    const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL; // 실제 체크리스트 서비스 URL로 교체
 
     fetch(checklistServiceUrl, {
       method: 'POST',

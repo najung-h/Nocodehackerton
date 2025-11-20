@@ -29,7 +29,7 @@ export function DocumentSection() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
   // gemini.md 기반 서비스 URL
-  const documentServiceUrl = '/document-service'; // TODO: 실제 문서 서비스 URL로 교체
+  const documentServiceUrl = import.meta.env.VITE_DOCUMENT_SERVICE_URL; // TODO: 실제 문서 서비스 URL로 교체
 
   useEffect(() => {
     const fetchDocuments = async () => {
