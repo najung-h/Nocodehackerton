@@ -28,12 +28,14 @@ export function DocumentSection() {
   const [uploadPropertyId, setUploadPropertyId] = useState('');
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
+  // '문서' 기능 통합 웹훅
+  const documentManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-documents'; // TODO: 실제 통합 웹훅 URL로 교체
+
   useEffect(() => {
     const fetchDocuments = async () => {
       setIsLoading(true);
-      const documentsWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_GET_DOCUMENTS_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
       try {
-        const response = await fetch(documentsWebhook);
+        const response = await fetch(documentManagerWebhook); // 통합 웹훅 GET
         if (!response.ok) throw new Error('Failed to fetch documents');
         const data = await response.json();
         setDocuments(data || []);
@@ -53,16 +55,16 @@ export function DocumentSection() {
       return;
     }
     setIsUploading(true);
-    const uploadWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_UPLOAD_DOCUMENT_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     
     const formData = new FormData();
+    formData.append('action', 'upload_document'); // 액션 구분자
     formData.append('file', uploadFile);
     formData.append('doc_type', uploadDocType);
     formData.append('issued_at', uploadIssuedAt);
     formData.append('property_id', uploadPropertyId);
 
     try {
-      const response = await fetch(uploadWebhook, {
+      const response = await fetch(documentManagerWebhook, { // 통합 웹훅 POST
         method: 'POST',
         body: formData,
       });

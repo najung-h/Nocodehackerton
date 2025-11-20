@@ -21,9 +21,10 @@ export function ProfileSection({ isLoggedIn, onLogout }: ProfileSectionProps) {
         return;
       }
       setIsLoading(true);
-      const profileWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_GET_PROFILE_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
+      // '사용자' 기능 통합 웹훅
+      const userManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-users'; // TODO: 실제 통합 웹훅 URL로 교체
       try {
-        const response = await fetch(profileWebhook);
+        const response = await fetch(userManagerWebhook); // 통합 웹훅 GET
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setUser(data);

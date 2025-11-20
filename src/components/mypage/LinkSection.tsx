@@ -22,11 +22,13 @@ export function LinkSection() {
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [formData, setFormData] = useState({ name: '', url: '', description: '' });
 
+  // '링크' 기능 통합 웹훅
+  const linkManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-links'; // TODO: 실제 통합 웹훅 URL로 교체
+
   const fetchLinks = async () => {
     setIsLoading(true);
-    const getLinksWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_GET_LINKS_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     try {
-      const response = await fetch(getLinksWebhook);
+      const response = await fetch(linkManagerWebhook); // 통합 웹훅 GET
       if (!response.ok) throw new Error('Failed to fetch links');
       const data = await response.json();
       setLinks(data || []);
@@ -60,11 +62,10 @@ export function LinkSection() {
       return;
     }
     setIsSubmitting(true);
-    const saveLinkWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_SAVE_LINK_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     
     try {
-      const response = await fetch(saveLinkWebhook, {
-        method: editingLink ? 'PUT' : 'POST',
+      const response = await fetch(linkManagerWebhook, { // 통합 웹훅 사용
+        method: editingLink ? 'PUT' : 'POST', // 기존 로직 유지
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: editingLink?.id, ...formData }),
       });
@@ -82,9 +83,8 @@ export function LinkSection() {
   };
 
   const handleDelete = async (id: number) => {
-    const deleteLinkWebhook = `https://ajjoona.app.n8n.cloud/webhook/YOUR_DELETE_LINK_WEBHOOK`; // TODO: 실제 웹훅 URL로 교체
     try {
-      const response = await fetch(deleteLinkWebhook, {
+      const response = await fetch(linkManagerWebhook, { // 통합 웹훅 사용
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),

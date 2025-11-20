@@ -561,10 +561,10 @@ export function ChecklistSection({ onChatbot }: ChecklistSectionProps = {}) {
   const handleExecuteAction = (actionType: string) => {
     toast.loading('액션을 실행하고 있습니다...', { id: actionType });
 
-    // ❗️ 모든 체크리스트 액션을 처리할 단일 "마스터" Webhook URL
-    const masterWebhookUrl = 'master_webhook_url'; // TODO: 실제 마스터 웹훅 URL로 교체
+    // '체크리스트' 기능 통합 웹훅
+    const checklistManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-checklists'; // TODO: 실제 통합 웹훅 URL로 교체
 
-    fetch(masterWebhookUrl, {
+    fetch(checklistManagerWebhook, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -14,12 +14,14 @@ export function ConversationSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
+  // '대화' 기능 통합 웹훅
+  const conversationManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-conversations'; // TODO: 실제 통합 웹훅 URL로 교체
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const conversationsWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_GET_CONVERSATIONS_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
       try {
-        const response = await fetch(conversationsWebhook);
+        const response = await fetch(conversationManagerWebhook); // 통합 웹훅 GET
         if (!response.ok) throw new Error('Failed to fetch conversations');
         const data = await response.json();
         setConversations(data.conversations || []);
@@ -43,13 +45,13 @@ export function ConversationSection() {
     if (!messageInput.trim() || !selectedConv || isSending) return;
     
     setIsSending(true);
-    const sendMessageWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_SEND_MESSAGE_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
 
     try {
-      const response = await fetch(sendMessageWebhook, {
+      const response = await fetch(conversationManagerWebhook, { // 통합 웹훅 POST
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          action: 'send_message', // 액션 구분자 추가
           conversationId: selectedConv,
           content: messageInput,
         }),

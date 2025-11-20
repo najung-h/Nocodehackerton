@@ -25,11 +25,13 @@ export function PropertySection() {
   const [uploadPropertyId, setUploadPropertyId] = useState<number | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
 
+  // 기능별로 통합된 단일 웹훅 URL
+  const propertyWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/manage-properties'; // TODO: 실제 통합 웹훅 URL로 교체
+
   const fetchProperties = async () => {
     setIsLoading(true);
-    const propertiesWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_GET_PROPERTIES_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     try {
-      const response = await fetch(propertiesWebhook);
+      const response = await fetch(propertyWebhookUrl); // GET 요청
       if (!response.ok) throw new Error('Failed to fetch properties');
       const data = await response.json();
       setProperties(data || []);
@@ -51,12 +53,14 @@ export function PropertySection() {
       return;
     }
     setIsSubmitting(true);
-    const addPropertyWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_ADD_PROPERTY_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     try {
-      const response = await fetch(addPropertyWebhook, {
+      const response = await fetch(propertyWebhookUrl, { // 통합 웹훅 사용
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: newAddress }),
+        body: JSON.stringify({ 
+          action: 'add_property', // 액션 구분자 추가
+          address: newAddress 
+        }),
       });
       if (!response.ok) throw new Error('Failed to add property');
       
@@ -83,14 +87,14 @@ export function PropertySection() {
       return;
     }
     setIsSubmitting(true);
-    const uploadDocWebhook = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_UPLOAD_PROPERTY_DOC_WEBHOOK'; // TODO: 실제 웹훅 URL로 교체
     
     const formData = new FormData();
+    formData.append('action', 'upload_document'); // 액션 구분자 추가
     formData.append('file', fileToUpload);
     formData.append('property_id', String(uploadPropertyId));
 
     try {
-      const response = await fetch(uploadDocWebhook, {
+      const response = await fetch(propertyWebhookUrl, { // 통합 웹훅 사용
         method: 'POST',
         body: formData,
       });

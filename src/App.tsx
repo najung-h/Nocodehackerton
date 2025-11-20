@@ -40,14 +40,19 @@ export default function App() {
     setIsLoggingIn(true);
     toast.loading("로그인 중...");
 
-    const loginWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_LOGIN_WEBHOOK_ID'; // TODO: 실제 로그인 웹훅 URL로 교체
+    // '사용자' 기능 통합 웹훅
+    const userManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-users'; // TODO: 실제 통합 웹훅 URL로 교체
 
     try {
       // 실제 앱에서는 사용자 이름, 비밀번호 등을 body에 담아 보냅니다.
-      const response = await fetch(loginWebhookUrl, {
+      const response = await fetch(userManagerWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user: 'demo-user', pass: 'demo-pass' }),
+        body: JSON.stringify({ 
+          action: 'login_or_signup', // 액션 구분자 추가
+          user: 'demo-user', 
+          pass: 'demo-pass' 
+        }),
       });
 
       if (!response.ok) {

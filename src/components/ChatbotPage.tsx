@@ -47,16 +47,17 @@ export function ChatbotPage({ onBack }: ChatbotPageProps) {
     setInput("");
     setIsLoading(true);
 
-    // ❗️ 챗봇 응답을 처리할 n8n Webhook URL
-    const chatbotWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_CHATBOT_WEBHOOK_ID'; // TODO: 실제 웹훅 URL로 교체
+    // '대화' 기능 통합 웹훅 사용
+    const conversationManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-conversations'; // TODO: 실제 통합 웹훅 URL로 교체
 
     try {
-      const response = await fetch(chatbotWebhookUrl, {
+      const response = await fetch(conversationManagerWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          action: 'new_query', // 액션 구분자 추가
           query: currentInput,
           // 필요하다면 이전 대화 기록이나 사용자 정보를 함께 보낼 수 있습니다.
           // history: messages 

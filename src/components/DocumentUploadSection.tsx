@@ -68,10 +68,11 @@ export function DocumentUploadSection({
     setIsUploading(true);
     setUploadProgress(0);
 
-    // ❗️ 문서 분석을 처리할 n8n의 Webhook URL
-    const analysisWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_DOCUMENT_ANALYSIS_WEBHOOK_ID'; // TODO: 실제 웹훅 URL로 교체
+    // '문서' 기능 통합 웹훅 사용
+    const documentManagerWebhook = 'https://ajjoona.app.n8n.cloud/webhook/manage-documents'; // TODO: 실제 통합 웹훅 URL로 교체
 
     const formData = new FormData();
+    formData.append('action', 'analyze_document'); // 액션 구분자
     formData.append('file', file);
 
     // 업로드 진행 시뮬레이션 (fetch는 기본적으로 진행률을 제공하지 않으므로)
@@ -80,7 +81,7 @@ export function DocumentUploadSection({
     }, 200);
 
     try {
-      const response = await fetch(analysisWebhookUrl, {
+      const response = await fetch(documentManagerWebhook, {
         method: 'POST',
         body: formData, // FormData를 사용하면 Content-Type은 브라우저가 자동으로 설정합니다.
       });

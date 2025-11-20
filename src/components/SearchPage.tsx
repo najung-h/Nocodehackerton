@@ -34,10 +34,10 @@ export function SearchPage({ onBack }: SearchPageProps) {
     setResults([]); // Clear previous results
     toast.loading("검색 중입니다...");
 
-    const searchWebhookUrl = 'https://ajjoona.app.n8n.cloud/webhook/YOUR_SEARCH_WEBHOOK_ID'; // TODO: 실제 검색 웹훅 URL로 교체
+    const searchWebhook = 'https://ajjoona.app.n8n.cloud/webhook/search-documents'; // TODO: 실제 웹훅 URL로 교체
 
     try {
-      const response = await fetch(searchWebhookUrl, {
+      const response = await fetch(searchWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery }),
