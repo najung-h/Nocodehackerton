@@ -1,5 +1,6 @@
 import { ChecklistItem } from './ChecklistItem';
 
+// 부모(ChecklistSection)로부터 받을 데이터 타입을 명확히 정의
 interface ChecklistItemData {
   id: string;
   title: string;
@@ -35,6 +36,7 @@ interface ChecklistListProps {
   onOpenEmptyJeonseCheck?: () => void;
   onExecuteAction?: (actionType: string) => void;
   onChatbot?: () => void;
+  onAddToCalendar: (item: ChecklistItemData) => void; // 1. onAddToCalendar prop을 추가합니다.
 }
 
 export function ChecklistList({
@@ -48,15 +50,13 @@ export function ChecklistList({
   onOpenRegistryAnalysis,
   onOpenEmptyJeonseCheck,
   onExecuteAction,
-  onChatbot
+  onChatbot,
+  onAddToCalendar // 2. prop을 받습니다.
 }: ChecklistListProps) {
   return (
     <div className="space-y-3">
-      {items.map((item, index) => (
+      {items.map((item) => (
         <div key={item.id} className="flex gap-4">
-          {/* Timeline - removed */}
-
-          {/* Checklist Item */}
           <div className="flex-1">
             <ChecklistItem
               item={item}
@@ -69,6 +69,7 @@ export function ChecklistList({
               onOpenEmptyJeonseCheck={onOpenEmptyJeonseCheck}
               onExecuteAction={onExecuteAction}
               onChatbot={onChatbot}
+              onAddToCalendar={onAddToCalendar} // 3. 받은 prop을 ChecklistItem으로 그대로 전달합니다.
             />
           </div>
         </div>

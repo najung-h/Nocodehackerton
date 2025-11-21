@@ -1,116 +1,47 @@
 import image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0 from "figma:asset/nest.png";
 import { useState, useRef } from "react";
-import {
-  Upload,
-  FileText,
-  X,
-  Check,
-  AlertCircle,
-} from "lucide-react";
+import { Upload, FileText, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { Progress } from "./ui/progress";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// 1. props 타입 변경: onAnalysisComplete -> onAction
 interface DocumentUploadSectionProps {
-  onAnalysisComplete: (report: AnalysisReport) => void;
+  onAction: (actionType: 'analyze_document', payload: { file: File }) => void;
 }
 
-interface AnalysisReport {
-  fileName: string;
-  checkedItems: string[];
-  findings: Array<{
-    type: "info" | "warning" | "error";
-    message: string;
-  }>;
-}
-
-export function DocumentUploadSection({
-  onAnalysisComplete,
-}: DocumentUploadSectionProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(
-    null,
-  );
+export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) {
+  // 2. 내부 로딩/진행 상태 제거, 파일 상태만 유지
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // 파일 타입 검증
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-    ];
+    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("PDF, JPG, PNG 파일만 업로드 가능합니다");
       return;
     }
 
-    // 파일 크기 검증 (10MB)
     if (file.size > 10 * 1024 * 1024) {
       toast.error("파일 크기는 10MB 이하여야 합니다");
       return;
     }
-
+    
     setUploadedFile(file);
-    analyzeDocument(file);
+
+    // 3. 내부 분석 함수 호출 대신 onAction prop 호출
+    toast.info("문서 분석을 시작합니다...");
+    onAction('analyze_document', { file });
   };
 
-  const analyzeDocument = async (file: File) => {
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    // gemini.md 기반 서비스 URL
-    const documentServiceUrl = '/document-service'; // TODO: 실제 문서 서비스 URL로 교체
-
-    const formData = new FormData();
-    formData.append('action', 'analyze'); // gemini.md에 명시된 'analyze' 액션
-    formData.append('file', file);
-
-    // 업로드 진행 시뮬레이션 (fetch는 기본적으로 진행률을 제공하지 않으므로)
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => (prev < 90 ? prev + 10 : prev));
-    }, 200);
-
-    try {
-      const response = await fetch(documentServiceUrl, {
-        method: 'POST',
-        body: formData, // FormData를 사용하면 Content-Type은 브라우저가 자동으로 설정합니다.
-      });
-
-      clearInterval(interval);
-      setUploadProgress(100);
-
-      if (!response.ok) {
-        throw new Error('문서 분석에 실패했습니다.');
-      }
-
-      const report: AnalysisReport = await response.json();
-
-      toast.success("문서 분석이 완료되었습니다!");
-      onAnalysisComplete(report);
-
-    } catch (error) {
-      clearInterval(interval);
-      setUploadProgress(0);
-      console.error('문서 분석 중 오류 발생:', error);
-      toast.error('문서 분석 중 오류가 발생했습니다.');
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  // 4. 내부 analyzeDocument 함수 전체 제거
 
   const handleRemoveFile = () => {
     setUploadedFile(null);
-    setUploadProgress(0);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -122,9 +53,7 @@ export function DocumentUploadSection({
         <div className="flex items-center gap-3">
           <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
             <ImageWithFallback
-              src={
-                image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0
-              }
+              src={image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0}
               alt="둥지"
               className="w-full h-full object-cover"
             />
@@ -139,7 +68,7 @@ export function DocumentUploadSection({
           </div>
         </div>
 
-        {/* 파일 업로드 영역 */}
+        {/* 5. UI 로직 간소화: 이제 부모의 로딩 상태에 따라 UI가 결정됨 */}
         {!uploadedFile ? (
           <div
             onClick={() => fileInputRef.current?.click()}
@@ -168,20 +97,14 @@ export function DocumentUploadSection({
           </div>
         ) : (
           <div className="space-y-3">
-            {/* 업로드된 파일 정보 */}
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
               <FileText className="w-6 h-6 text-primary flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm truncate">
-                  {uploadedFile.name}
-                </p>
+                <p className="text-sm truncate">{uploadedFile.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {(uploadedFile.size / 1024).toFixed(1)} KB
                 </p>
               </div>
-              {!isUploading && uploadProgress === 100 && (
-                <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-              )}
               <Button
                 variant="ghost"
                 size="sm"
@@ -191,53 +114,9 @@ export function DocumentUploadSection({
                 <X className="w-4 h-4" />
               </Button>
             </div>
-
-            {/* 업로드 진행바 */}
-            {isUploading && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    AI 분석 중...
-                  </span>
-                  <span className="text-primary">
-                    {uploadProgress}%
-                  </span>
-                </div>
-                <Progress
-                  value={uploadProgress}
-                  className="h-2"
-                />
-              </div>
-            )}
-
-            {/* 분석 완료 메시지 */}
-            {!isUploading && uploadProgress === 100 && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
-                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-sm text-green-800">
-                    분석이 완료되었습니다! 체크리스트 항목이
-                    자동으로 업데이트됩니다.
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* 로딩 및 완료 상태 표시는 이제 App.tsx에서 toast 등으로 처리하므로 여기서는 제거 */}
           </div>
         )}
-
-        {/* 안내 메시지 */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <div className="flex-1 text-sm text-blue-800">
-            <p>
-              <strong>지원하는 문서:</strong> 등기부등본, 전월세
-              계약서 초안, 건축물대장 등
-            </p>
-            <p className="mt-1 text-xs text-blue-700">
-              개인정보는 분석 후 즉시 삭제되며 저장되지 않습니다
-            </p>
-          </div>
-        </div>
       </div>
     </Card>
   );

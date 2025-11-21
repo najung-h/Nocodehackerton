@@ -1,25 +1,26 @@
-import { ArrowLeft, ClipboardList, LogIn, MessageCircle } from 'lucide-react';
+import { ArrowLeft, LogIn, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ChecklistSection } from './ChecklistSection';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import checklistImage from "figma:asset/baby_in_nest.png";
+
+// 1. props 타입 정의에 onAction과 isLoading 추가
+// ActionType은 App.tsx와 동일하게 정의되어 있어야 하지만, 여기서는 any로 간단히 처리
+type ActionType = any; 
 
 interface ChecklistPageProps {
   onBack: () => void;
-  onChatbot: () => void;
+  onAction: (actionType: ActionType, payload?: any) => void;
+  isLoading: Record<string, boolean>;
 }
 
-export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
+// 2. props에서 onAction과 isLoading을 받도록 함
+export function ChecklistPage({ onBack, onAction, isLoading }: ChecklistPageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100">
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 max-w-4xl">
-        {/* Top Navigation */}
         <div className="flex items-center justify-between mb-4">
-          <Button
-            onClick={onBack}
-            variant="ghost"
-            className="text-gray-700 hover:text-gray-900"
-          >
+          <Button onClick={onBack} variant="ghost" className="text-gray-700 hover:text-gray-900">
             <ArrowLeft className="w-4 h-4 mr-2" />
             메인으로
           </Button>
@@ -33,7 +34,6 @@ export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
           </Button>
         </div>
 
-        {/* Header */}
         <div className="mb-6 sm:mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex items-center justify-center">
@@ -50,36 +50,16 @@ export function ChecklistPage({ onBack, onChatbot }: ChecklistPageProps) {
           </p>
         </div>
 
-        {/* Checklist */}
-        <ChecklistSection onChatbot={onChatbot} />
+        {/* 3. ChecklistSection으로 onAction과 isLoading을 그대로 전달 */}
+        <ChecklistSection onAction={onAction} isLoading={isLoading} />
       </div>
 
-      {/* 챗봇 플로팅 버튼 */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative group">
-          {/* 펄스 애니메이션 효과 */}
-          <div className="absolute inset-0 bg-[#22909D] rounded-full opacity-75 group-hover:opacity-100 animate-pulse"></div>
-          
-          <Button
-            onClick={onChatbot}
-            className="relative w-16 h-16 rounded-full bg-[#22909D] hover:bg-[#22909D]/90 text-white shadow-2xl hover:shadow-[#22909D]/50 transition-all duration-300 transform hover:scale-110 border-4 border-white"
-            title="둥지 AI 챗봇"
-          >
-            <div className="relative">
-              <MessageCircle className="w-7 h-7" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-bounce"></div>
-            </div>
-          </Button>
-          
-          {/* 툴팁 */}
-          <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-xl">
-              💬 AI 챗봇과 대화하기
-              <div className="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* 
+        onChatbot 기능은 이제 ChecklistSection 내부의 ChatDialog에서 처리하므로,
+        ChecklistSection 자체에 onAction을 넘겨주는 것으로 대체 가능.
+        챗봇 버튼을 누르면 onAction('open_chat') 등을 호출하는 방식으로 변경할 수 있음.
+        일단 기존 구조 유지를 위해 onChatbot 관련 코드는 제거.
+      */}
     </div>
   );
 }
