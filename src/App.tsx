@@ -1,197 +1,329 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
-  Search,
-  ClipboardList,
+  Home,
+  Search as SearchIcon,
+  CheckSquare,
   MessageCircle,
+  User as UserIcon,
   LogIn,
   LogOut,
-  User as UserIcon,
 } from "lucide-react";
+
+import { 
+  ActionType, 
+  Page, 
+  UserProfile, 
+  Property, 
+  Document, 
+  Link as LinkType, 
+  Conversation, 
+  ChatMessage, 
+  SearchResult 
+} from "./types";
+
 import { NestBadge } from "./components/NestBadge";
 import { FeatureCard } from "./components/FeatureCard";
 import { SearchPage } from "./components/SearchPage";
-import { ChecklistPage } from "./components/ChecklistPage";
 import { ChatbotPage } from "./components/ChatbotPage";
+import { ChecklistPage } from "./components/ChecklistPage";
 import { MyPage } from "./components/MyPage";
-import { DocumentUploadSection } from "./components/DocumentUploadSection";
-import { Button } from "./components/ui/button";
 import { toast } from "sonner";
-
-// 모든 ActionType 정의
-type ActionType = 
-  | 'login' | 'logout' | 'get_profile'
-  | 'get_properties' | 'add_property'
-  | 'get_documents' | 'upload_document'
-  | 'get_conversations' | 'send_chat_message'
-  | 'get_links' | 'create_link' | 'update_link' | 'delete_link'
-  | 'search_legal' | 'analyze_document'
-  | 'export_pdf' | 'send_email' | 'add_to_calendar';
-
-type Page = "home" | "search" | "checklist" | "chatbot" | "mypage";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
 
-  // 모든 중앙 상태
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [properties, setProperties] = useState<any[]>([]);
-  const [documents, setDocuments] = useState<any[]>([]);
-  const [links, setLinks] = useState<any[]>([]);
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [chatMessages, setChatMessages] = useState<any[]>([]);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  // ==== 중앙 상태 ====
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [links, setLinks] = useState<LinkType[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
-  // =================================================================
-  // 중앙 액션 컨트롤러: handleAction (모든 fetch 로직 구현)
-  // =================================================================
-  const handleAction = useCallback(async (actionType: ActionType, payload?: any) => {
-    if (isLoading[actionType]) return; // 중복 요청 방지
-    setIsLoading(prev => ({ ...prev, [actionType]: true }));
+  // ==== 환경 변수 ====
+  const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL;
+  const documentServiceUrl = import.meta.env.VITE_DOCUMENT_SERVICE_URL;
+  const chatServiceUrl = import.meta.env.VITE_CHAT_SERVICE_URL;
 
-    // 서비스 URL 정의
-    const checklistServiceUrl = import.meta.env.VITE_CHECKLIST_SERVICE_URL;
-    const documentServiceUrl = import.meta.env.VITE_DOCUMENT_SERVICE_URL;
-    const chatServiceUrl = import.meta.env.VITE_CHAT_SERVICE_URL;
+  /* ============================================================
+     중앙 액션 컨트롤러
+  ============================================================ */
+  const handleAction = useCallback(
+    async (actionType: ActionType, payload: any = {}) => {
+      if (isLoading[actionType]) return;
 
-    let serviceUrl = checklistServiceUrl; // 기본 URL은 체크리스트 서비스
-    let options: RequestInit = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: actionType, ...payload }),
-    };
+      setIsLoading((prev) => ({ ...prev, [actionType]: true }));
 
-    try {
-      let response: Response;
+      try {
+        let serviceUrl = checklistServiceUrl;
+        let options: RequestInit = { method: "POST" };
 
-      switch (actionType) {
-        // --- 인증 ---
-        case 'login':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('로그인에 실패했습니다.');
-          setIsLoggedIn(true);
-          toast.success("로그인되었습니다.");
-          break;
-        case 'logout':
-          setIsLoggedIn(false);
-          setUserProfile(null);
-          toast.success("로그아웃되었습니다.");
-          break;
-        
-        // --- 마이페이지: 프로필 ---
-        case 'get_profile':
-          if (!isLoggedIn) break;
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('프로필 정보를 불러오는데 실패했습니다.');
-          setUserProfile(await response.json());
-          break;
+        /* -------------------------
+           1) URL 분기
+        ------------------------- */
+        if ([
+          "send_chat_message",
+          "get_conversations"
+        ].includes(actionType)) {
+          serviceUrl = chatServiceUrl;
+        }
+        if ([
+          "upload_document",
+          "analyze_document",
+          "get_documents"
+        ].includes(actionType)) {
+          serviceUrl = documentServiceUrl;
+        }
 
-        // --- 마이페이지: 주택 ---
-        case 'get_properties':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('주택 정보를 불러오는데 실패했습니다.');
-          setProperties(await response.json());
-          break;
-        case 'add_property':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('주택 등록에 실패했습니다.');
-          toast.success("주택이 등록되었습니다.");
-          await handleAction('get_properties'); // 목록 새로고침
-          break;
+        /* -------------------------
+           2) Method / Body 분기
+        ------------------------- */
+        switch (actionType) {
+          /* ============================
+             인증 관련
+          ============================ */
+          case "login":
+            options = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            };
+            break;
 
-        // --- 마이페이지 & 문서 업로드 ---
-        case 'get_documents':
-          response = await fetch(documentServiceUrl, options);
-          if (!response.ok) throw new Error('문서 목록을 불러오는데 실패했습니다.');
-          setDocuments(await response.json());
-          break;
-        case 'upload_document':
-        case 'analyze_document':
-          const formData = new FormData();
-          formData.append('action', actionType === 'analyze_document' ? 'analyze' : 'scan');
-          formData.append('file', payload.file);
-          if (payload.property_id) formData.append('property_id', payload.property_id);
-          
-          options = { method: 'POST', body: formData };
-          delete (options.headers as any)['Content-Type']; // FormData 사용 시 브라우저가 자동으로 설정하도록 헤더 삭제
+          case "logout":
+            setIsLoggedIn(false);
+            setUserProfile(null);
+            toast.success("로그아웃되었습니다.");
+            return;
 
-          response = await fetch(documentServiceUrl, options);
-          if (!response.ok) throw new Error('문서 처리에 실패했습니다.');
-          
-          if (actionType === 'analyze_document') {
-            const report = await response.json();
-            toast.success("문서 분석이 완료되었습니다!");
-            setCurrentPage("checklist");
-          } else {
+          /* ============================
+             GET 요청들
+          ============================ */
+          case "get_profile":
+          case "get_properties":
+          case "get_links":
+          case "get_conversations":
+          case "get_documents":
+            options = { method: "GET" };
+            break;
+
+          /* ============================
+             검색 / 챗봇 — JSON POST
+          ============================ */
+          case "search_legal":
+          case "send_chat_message":
+            options = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            };
+            break;
+
+          /* ============================
+             주택 추가 — JSON POST
+          ============================ */
+          case "add_property":
+          case "create_link":
+          case "update_link":
+          case "delete_link":
+          case "export_pdf":
+          case "send_email":
+          case "add_to_calendar":
+            options = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            };
+            break;
+
+          /* ============================
+             파일 업로드 — FormData POST
+          ============================ */
+          case "upload_document":
+          case "analyze_document":
+            const form = new FormData();
+            form.append("file", payload.file);
+            if (payload.property_id) form.append("property_id", payload.property_id);
+
+            options = { method: "POST", body: form };
+            break;
+
+          default:
+            throw new Error(`Unknown action type: ${actionType}`);
+        }
+
+        /* -------------------------
+           3) fetch 실행
+        ------------------------- */
+        const response = await fetch(serviceUrl, options);
+        if (!response.ok) throw new Error("요청 처리 실패");
+
+        /* -------------------------
+           4) 응답 처리
+        ------------------------- */
+        switch (actionType) {
+          case "login":
+            setIsLoggedIn(true);
+            toast.success("로그인 성공");
+            break;
+
+          case "get_profile":
+            setUserProfile(await response.json());
+            break;
+
+          case "get_properties":
+            setProperties(await response.json());
+            break;
+
+          case "add_property":
+            toast.success("주택이 추가되었습니다.");
+            await handleAction("get_properties");
+            break;
+
+          case "get_documents":
+            setDocuments(await response.json());
+            break;
+
+          case "upload_document":
             toast.success("문서가 업로드되었습니다.");
-            await handleAction('get_documents'); // 문서 목록 새로고침
-          }
-          break;
+            await handleAction("get_documents");
+            break;
 
-        // --- 마이페이지: 대화 ---
-        case 'get_conversations':
-          response = await fetch(chatServiceUrl, options);
-          if (!response.ok) throw new Error('대화 기록을 불러오는데 실패했습니다.');
-          setConversations(await response.json());
-          break;
+          case "analyze_document":
+            toast.success("문서 분석 완료");
+            setCurrentPage("checklist");
+            break;
 
-        // --- 마이페이지: 링크 ---
-        case 'get_links':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('링크를 불러오는데 실패했습니다.');
-          setLinks(await response.json());
-          break;
-        case 'create_link':
-        case 'update_link':
-        case 'delete_link':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('링크 작업에 실패했습니다.');
-          toast.success('링크가 처리되었습니다.');
-          await handleAction('get_links'); // 목록 새로고침
-          break;
-          
-        // --- 챗봇 & 검색 ---
-        case 'send_chat_message':
-          response = await fetch(chatServiceUrl, options);
-          if (!response.ok) throw new Error('메시지 전송에 실패했습니다.');
-          setChatMessages(await response.json());
-          break;
-        case 'search_legal':
-          response = await fetch(chatServiceUrl, options);
-          if (!response.ok) throw new Error('검색에 실패했습니다.');
-          setSearchResults(await response.json());
-          break;
+          case "get_links":
+            setLinks(await response.json());
+            break;
 
-        // --- 기타 기능 ---
-        case 'export_pdf':
-        case 'send_email':
-        case 'add_to_calendar':
-          response = await fetch(serviceUrl, options);
-          if (!response.ok) throw new Error('요청 처리에 실패했습니다.');
-          toast.success("요청이 성공적으로 처리되었습니다.");
-          break;
+          case "create_link":
+          case "update_link":
+          case "delete_link":
+            toast.success("링크 작업 완료");
+            await handleAction("get_links");
+            break;
 
-        default:
-          throw new Error(`알 수 없는 액션 타입입니다: ${actionType}`);
+          case "get_conversations":
+            setConversations(await response.json());
+            break;
+
+          case "send_chat_message":
+            setChatMessages(await response.json());
+            break;
+
+          case "search_legal":
+            setSearchResults(await response.json());
+            break;
+
+          case "export_pdf":
+            toast.success("PDF 생성 완료");
+            break;
+
+          case "send_email":
+            toast.success("이메일 발송 완료");
+            break;
+
+          case "add_to_calendar":
+            toast.success("캘린더에 추가되었습니다.");
+            break;
+        }
+      } catch (err: any) {
+        toast.error(err.message || "오류 발생");
+      } finally {
+        setIsLoading((prev) => ({ ...prev, [actionType]: false }));
       }
-    } catch (error: any) {
-      toast.error(error.message || '알 수 없는 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(prev => ({ ...prev, [actionType]: false }));
-    }
-  }, [isLoggedIn]);
+    },
+    [isLoading]
+  );
 
-
+  /* =============================================================
+     페이지 렌더기
+  ============================================================= */
   const renderPageContent = () => {
-    // ... 페이지 렌더링 로직은 이전과 동일
-    // MyPage에 documents, links를 전달하도록 수정
-    return <MyPage onBack={() => setCurrentPage("home")} isLoggedIn={isLoggedIn} onAction={handleAction} userProfile={userProfile} properties={properties} documents={documents} links={links} conversations={conversations} isLoading={isLoading} />;
+    switch (currentPage) {
+      case "search":
+        return (
+          <SearchPage
+            onBack={() => setCurrentPage("home")}
+            onAction={handleAction}
+            results={searchResults}
+            isLoading={isLoading["search_legal"]}
+          />
+        );
+
+      case "chatbot":
+        return (
+          <ChatbotPage
+            onBack={() => setCurrentPage("home")}
+            onAction={handleAction}
+            messages={chatMessages}
+            isLoading={isLoading["send_chat_message"]}
+          />
+        );
+
+      case "checklist":
+        return (
+          <ChecklistPage
+            onBack={() => setCurrentPage("home")}
+            onAction={handleAction}
+            isLoading={isLoading}
+          />
+        );
+
+      case "mypage":
+        return (
+          <MyPage
+            onBack={() => setCurrentPage("home")}
+            isLoggedIn={isLoggedIn}
+            onAction={handleAction}
+            userProfile={userProfile}
+            properties={properties}
+            documents={documents}
+            links={links}
+            conversations={conversations}
+            isLoading={isLoading}
+          />
+        );
+
+      default:
+        return (
+          <main className="min-h-screen bg-white p-6">
+            {/* 홈 화면 내용 그대로 유지 */}
+            <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+              <NestBadge />
+              <FeatureCard
+                icon={SearchIcon}
+                title="법률 검색"
+                onClick={() => setCurrentPage("search")}
+              />
+              <FeatureCard
+                icon={CheckSquare}
+                title="전세 체크리스트"
+                onClick={() => setCurrentPage("checklist")}
+              />
+              <FeatureCard
+                icon={MessageCircle}
+                title="AI 챗봇"
+                onClick={() => setCurrentPage("chatbot")}
+              />
+              <FeatureCard
+                icon={UserIcon}
+                title="MY"
+                onClick={() => setCurrentPage("mypage")}
+              />
+            </div>
+          </main>
+        );
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header> {/* ... */}</header>
+    <div>
       {renderPageContent()}
     </div>
   );
