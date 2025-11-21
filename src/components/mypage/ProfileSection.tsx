@@ -1,21 +1,17 @@
-import { User, Mail, Calendar, Edit, Key, LogOut, Loader2 } from 'lucide-react';
+import { User, Mail, Calendar, LogOut, Loader2 } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { UserProfile, ActionType } from '../../types'; // 1. 타입 import
 
-// 1. props 타입 정의 변경
+// 2. Props 타입 구체화
 interface ProfileSectionProps {
-  userProfile: any;
+  userProfile: UserProfile | null;
   isLoggedIn: boolean;
   isLoading: boolean;
   onAction: (actionType: 'logout') => void;
 }
 
 export function ProfileSection({ userProfile, isLoggedIn, isLoading, onAction }: ProfileSectionProps) {
-  // 2. 내부 상태 및 useEffect 제거
-  // const [user, setUser] = useState<any>(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // useEffect(() => { ... });
 
   if (isLoading) {
     return (
@@ -26,7 +22,6 @@ export function ProfileSection({ userProfile, isLoggedIn, isLoading, onAction }:
     );
   }
 
-  // 3. props로 받은 userProfile 사용
   if (!isLoggedIn || !userProfile) {
     return (
       <Card className="p-8 bg-white rounded-2xl shadow-md border-border text-center">
@@ -52,6 +47,7 @@ export function ProfileSection({ userProfile, isLoggedIn, isLoading, onAction }:
           <div className="space-y-4 w-full max-w-md">
             <div className="flex items-center gap-3 justify-center text-foreground">
               <User className="w-5 h-5 text-muted-foreground" />
+              {/* 3. 구체화된 타입의 필드 사용 */}
               <span className="text-lg font-semibold">{userProfile.username}</span>
             </div>
             <div className="flex items-center gap-3 justify-center text-foreground">
@@ -63,12 +59,7 @@ export function ProfileSection({ userProfile, isLoggedIn, isLoading, onAction }:
               <span>가입일: {new Date(userProfile.created_at).toLocaleDateString('ko-KR')}</span>
             </div>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md pt-4">
-            {/* ... 수정/비밀번호 변경 버튼 UI (동일) ... */}
-          </div>
           
-          {/* 4. 로그아웃 버튼이 onAction을 호출하도록 변경 */}
           {isLoggedIn && (
             <div className="w-full max-w-md pt-2 border-t border-border">
               <Button onClick={() => onAction('logout')} variant="ghost" className="w-full rounded-full text-[#E65A5A] hover:text-[#E65A5A] hover:bg-[#E65A5A]/10">

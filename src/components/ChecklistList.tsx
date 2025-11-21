@@ -1,28 +1,5 @@
 import { ChecklistItem } from './ChecklistItem';
-
-// 부모(ChecklistSection)로부터 받을 데이터 타입을 명확히 정의
-interface ChecklistItemData {
-  id: string;
-  title: string;
-  description?: string;
-  what?: string;
-  why?: string;
-  isChecked: boolean;
-  isCustom: boolean;
-  hasTimeline: boolean;
-  timelineLabel?: string;
-  isImportant?: boolean;
-  links?: Array<{ label: string; url: string }>;
-  guidelines?: string;
-  hasCalendar?: boolean;
-  isEditing?: boolean;
-  hasRiskDiagnosis?: boolean;
-  hasOwnerCheck?: boolean;
-  hasRegistryAnalysis?: boolean;
-  hasEmptyJeonseCheck?: boolean;
-  actionType?: string;
-  actionLabel?: string;
-}
+import { ChecklistItemData } from '../../types'; // 1. 타입 import
 
 interface ChecklistListProps {
   items: ChecklistItemData[];
@@ -34,9 +11,10 @@ interface ChecklistListProps {
   onOpenOwnerCheck?: () => void;
   onOpenRegistryAnalysis?: () => void;
   onOpenEmptyJeonseCheck?: () => void;
-  onExecuteAction?: (actionType: string) => void;
+  // 2. onExecuteAction의 타입 시그니처 수정
+  onExecuteAction?: (actionType: string, payload: any) => void;
   onChatbot?: () => void;
-  onAddToCalendar: (item: ChecklistItemData) => void; // 1. onAddToCalendar prop을 추가합니다.
+  onAddToCalendar: (item: ChecklistItemData) => void;
 }
 
 export function ChecklistList({
@@ -45,13 +23,9 @@ export function ChecklistList({
   onToggleCheck,
   onUpdateItem,
   onDeleteItem,
-  onOpenRiskDiagnosis,
-  onOpenOwnerCheck,
-  onOpenRegistryAnalysis,
-  onOpenEmptyJeonseCheck,
   onExecuteAction,
   onChatbot,
-  onAddToCalendar // 2. prop을 받습니다.
+  onAddToCalendar
 }: ChecklistListProps) {
   return (
     <div className="space-y-3">
@@ -63,13 +37,10 @@ export function ChecklistList({
               onToggleCheck={() => onToggleCheck(phase, item.id)}
               onUpdate={(title, description) => onUpdateItem(phase, item.id, title, description)}
               onDelete={() => onDeleteItem(phase, item.id)}
-              onOpenRiskDiagnosis={onOpenRiskDiagnosis}
-              onOpenOwnerCheck={onOpenOwnerCheck}
-              onOpenRegistryAnalysis={onOpenRegistryAnalysis}
-              onOpenEmptyJeonseCheck={onOpenEmptyJeonseCheck}
-              onExecuteAction={onExecuteAction}
+              onExecuteAction={onExecuteAction} // 3. 수정된 핸들러 전달
               onChatbot={onChatbot}
-              onAddToCalendar={onAddToCalendar} // 3. 받은 prop을 ChecklistItem으로 그대로 전달합니다.
+              onAddToCalendar={onAddToCalendar}
+              // ... 다른 onOpen 핸들러들 전달
             />
           </div>
         </div>

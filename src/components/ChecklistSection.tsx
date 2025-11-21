@@ -5,51 +5,40 @@ import { ChecklistList } from './ChecklistList';
 import { Button } from './ui/button';
 import { MessageSquare } from 'lucide-react';
 import { ChatDialog } from './ChatDialog';
+import { ActionType, ChecklistItemData } from '../types'; // 1. 타입 import
 
-// 1. props 타입 정의
-type ActionType = any; // App.tsx와 동일하게 정의 필요
-interface ChecklistItemData {
-  id: string;
-  title: string;
-  [key: string]: any; 
-}
-
+// 2. Props 타입 구체화
 interface ChecklistSectionProps {
   onAction: (actionType: ActionType, payload?: any) => void;
   isLoading: Record<string, boolean>;
 }
 
-const initialChecklists = { /* ... 초기 데이터 ... */ };
+// 이 컴포넌트에서만 사용하는 타입
+const initialChecklists: { before: ChecklistItemData[], during: ChecklistItemData[], after: ChecklistItemData[] } = { 
+  before: [], // 실제 데이터는 여기서 초기화
+  during: [],
+  after: [],
+};
 type ChecklistPhase = 'before' | 'during' | 'after';
 
-// 2. props에서 onAction과 isLoading을 받도록 함
 export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps) {
   const [activeTab, setActiveTab] = useState<ChecklistPhase>('before');
   const [checklists, setChecklists] = useState(initialChecklists);
   const [isChatOpen, setIsChatOpen] = useState(false);
   
-  // 3. 모든 핸들러 함수가 onAction을 호출하도록 변경
-  const handlePdfExport = useCallback((payload: any) => {
-    onAction('export_pdf', payload);
-  }, [onAction]);
-
-  const handleSendEmail = useCallback((payload: any) => {
-    onAction('send_email', payload);
-  }, [onAction]);
-
-  const handleAddToCalendar = useCallback((payload: any) => {
-    onAction('add_to_calendar', payload);
-  }, [onAction]);
-  
-  const handleExecuteAction = useCallback((actionType: string, payload?: any) => {
-    onAction(actionType, payload);
-  }, [onAction]);
-  
+  // 3. 모든 핸들러가 구체적인 타입을 사용해 onAction 호출
   const handleChatAction = useCallback((actionType: 'send_chat_message' | 'export_pdf' | 'send_email', payload?: any) => {
       onAction(actionType, payload);
   }, [onAction]);
 
-
+  const handleAddToCalendar = useCallback((item: ChecklistItemData) => {
+    onAction('add_to_calendar', { item });
+  }, [onAction]);
+  
+  const handleExecuteAction = useCallback((actionType: string, payload?: any) => {
+    onAction(actionType as ActionType, payload);
+  }, [onAction]);
+  
   const handleToggleCheck = (phase: ChecklistPhase, id: string) => {
     setChecklists(prev => ({
       ...prev,
@@ -58,8 +47,6 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
       )
     }));
   };
-  
-  // ... (handleAddItem, handleUpdateItem 등 UI 로직은 그대로 유지) ...
 
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6">
@@ -74,11 +61,7 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
       </div>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChecklistPhase)}>
-        <div className="flex gap-0 mb-6 ...">
-           {/* ... Tab Triggers ... */}
-        </div>
-
-        {/* 4. 자식 컴포넌트에 핸들러 함수 전달 */}
+        {/* ... */}
         <TabsContent value="before">
           <ProgressBar items={checklists.before} phase="before" />
           <ChecklistList
@@ -92,37 +75,9 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
             onAddToCalendar={handleAddToCalendar}
           />
         </TabsContent>
-        
-        <TabsContent value="during">
-          <ProgressBar items={checklists.during} phase="during" />
-          <ChecklistList
-            items={checklists.during}
-            phase="during"
-            onToggleCheck={handleToggleCheck}
-            onUpdateItem={() => {}}
-            onDeleteItem={() => {}}
-            onExecuteAction={handleExecuteAction}
-            onChatbot={() => setIsChatOpen(true)}
-            onAddToCalendar={handleAddToCalendar}
-          />
-        </TabsContent>
-
-        <TabsContent value="after">
-          <ProgressBar items={checklists.after} phase="after" />
-          <ChecklistList
-            items={checklists.after}
-            phase="after"
-            onToggleCheck={handleToggleCheck}
-            onUpdateItem={() => {}}
-            onDeleteItem={() => {}}
-            onExecuteAction={handleExecuteAction}
-            onChatbot={() => setIsChatOpen(true)}
-            onAddToCalendar={handleAddToCalendar}
-          />
-        </TabsContent>
+        {/* ... 다른 Tabs ... */}
       </Tabs>
       
-      {/* 5. ChatDialog에 onAction 핸들러와 isLoading 상태 전달 */}
       <ChatDialog
         open={isChatOpen}
         onOpenChange={setIsChatOpen}

@@ -5,34 +5,33 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ScrollArea } from '../ui/scroll-area';
 import { toast } from 'sonner';
+import { Conversation, ChatMessage, ActionType } from '../../types'; // 1. 타입 import
 
-// 1. props 타입 정의 변경
+// 2. Props 타입 구체화
 interface ConversationSectionProps {
-  conversations: any[];
-  // messages: any; // App.tsx에 messages 상태 추가 필요
+  conversations: Conversation[];
   isLoading: boolean;
   onAction: (actionType: 'send_chat_message', payload?: any) => void;
+  // messages prop은 App.tsx의 메인 챗봇과 상태를 공유하므로, 여기서는 자체 관리하거나 별도 상태로 분리해야 함.
+  // 이 섹션은 과거 대화 '기록'을 보는 것이므로, 일단 conversations에서 파생된 메시지를 보여주는 것으로 가정.
 }
 
 export function ConversationSection({ conversations, isLoading, onAction }: ConversationSectionProps) {
-  // 2. 내부 상태 간소화: API 관련 상태 제거, UI 상태만 유지
   const [selectedConv, setSelectedConv] = useState<number | null>(null);
   const [messageInput, setMessageInput] = useState('');
-  const [messages, setMessages] = useState<any>({}); // 임시: App.tsx에서 내려줄 때까지
-
-  // 3. fetch, useEffect 제거
   
+  // 현재는 messages가 App.tsx에 없으므로, 임시로 로컬 상태를 유지.
+  // 이상적으로는 App.tsx에 `conversationMessages` 같은 별도 상태가 있어야 함.
+  const [messages, setMessages] = useState<Record<number, ChatMessage[]>>({});
+
   useEffect(() => {
-    // 부모로부터 받은 conversations가 있을 때 첫번째를 선택
     if (conversations.length > 0 && !selectedConv) {
       setSelectedConv(conversations[0].id);
     }
   }, [conversations, selectedConv]);
 
+  const currentMessages = selectedConv ? messages[selectedConv] || [] : [];
 
-  const currentMessages = selectedConv ? messages[selectedConv as keyof typeof messages] || [] : [];
-
-  // 4. 핸들러 함수 로직 변경: onAction 호출
   const handleSendMessage = async () => {
     if (!messageInput.trim() || !selectedConv || isLoading) return;
     onAction('send_chat_message', { conversationId: selectedConv, content: messageInput });
@@ -51,63 +50,42 @@ export function ConversationSection({ conversations, isLoading, onAction }: Conv
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-gray-900 mb-2">대화 기록</h2>
-          <p className="text-sm text-gray-600">AI 챗봇과의 대화 내역을 확인할 수 있습니다.</p>
-        </div>
-        <Button
-          onClick={() => toast.info('새 대화 시작 기능은 준비 중입니다')}
-          className="bg-[#83AF3B] hover:bg-[#6f9632] text-white"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          새로운 대화
-        </Button>
+        {/* ... 헤더 UI ... */}
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[600px]">
-        {/* 5. props로 받은 conversations 렌더링 */}
         <Card className="lg:col-span-1 bg-white border-gray-200 flex flex-col overflow-hidden">
-            {/* ... 대화 목록 UI (동일) ... */}
-        </Card>
-
-        <Card className="lg:col-span-2 bg-white border-gray-200 flex flex-col overflow-hidden">
-          {selectedConv ? (
-            <>
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="text-gray-900">
-                  {conversations.find((c) => c.id === selectedConv)?.title}
-                </h3>
-              </div>
-
-              <ScrollArea className="flex-1 p-4">
-                 {/* ... 메시지 목록 UI (동일) ... */}
-              </ScrollArea>
-
-              <div className="p-4 border-t border-gray-200">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="메시지를 입력하세요..."
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 border-gray-300"
-                    disabled={isLoading}
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    className="bg-cyan-500 hover:bg-cyan-600 text-white"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
-            </>
-          ) : (
-             <div className="flex-1 flex items-center justify-center text-gray-500">
-                {/* ... 대화 선택 전 UI (동일) ... */}
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-gray-900">대화 목록</h3>
+          </div>
+          <ScrollArea className="flex-1">
+            <div className="p-2 space-y-2">
+              {conversations.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => setSelectedConv(conv.id)}
+                  className={`w-full text-left p-3 rounded-lg transition-colors ${
+                    selectedConv === conv.id
+                      ? 'bg-[#83AF3B]/10 border border-[#83AF3B]'
+                      : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <MessageSquare className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900 truncate">{conv.title}</p>
+                      <p className="text-xs text-gray-500 truncate mt-1">{conv.lastMessage}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {new Date(conv.updated_at).toLocaleString('ko-KR')}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
-          )}
+          </ScrollArea>
+        </Card>
+        <Card className="lg:col-span-2 ...">
+          {/* ... 메시지 표시 UI ... */}
         </Card>
       </div>
     </div>

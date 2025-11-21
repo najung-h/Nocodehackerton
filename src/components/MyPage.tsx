@@ -6,24 +6,31 @@ import { ProfileSection } from './mypage/ProfileSection';
 import { PropertySection } from './mypage/PropertySection';
 import { ConversationSection } from './mypage/ConversationSection';
 import { LinkSection } from './mypage/LinkSection';
-import { DocumentSection } from './mypage/DocumentSection'; // 1. DocumentSection import
+import { DocumentSection } from './mypage/DocumentSection';
+// 1. 중앙 타입 정의 import
+import { 
+  ActionType, 
+  UserProfile,
+  Property,
+  Document as DocumentType,
+  Link as LinkType,
+  Conversation
+} from '../types';
 
-type ActionType = any; // 간소화
-
+// 2. Props 타입 구체화
 interface MyPageProps {
   onBack: () => void;
   isLoggedIn: boolean;
   onAction: (actionType: ActionType, payload?: any) => void;
-  userProfile: any;
-  properties: any[];
-  documents: any[]; // 2. documents prop 추가
-  links: any[];
-  conversations: any[];
+  userProfile: UserProfile | null;
+  properties: Property[];
+  documents: DocumentType[];
+  links: LinkType[];
+  conversations: Conversation[];
   isLoading: Record<string, boolean>;
 }
 
-// 3. Section 타입 및 메뉴 아이템 추가
-type Section = 'profile' | 'property' | 'conversation' | 'documents' | 'link';
+type Section = 'profile' | 'property' | 'documents' | 'conversation' | 'link';
 
 export function MyPage({ 
   onBack, 
@@ -48,7 +55,7 @@ export function MyPage({
       case 'property':
         onAction('get_properties');
         break;
-      case 'documents': // 4. documents 섹션 데이터 요청 추가
+      case 'documents':
         onAction('get_documents');
         break;
       case 'conversation':
@@ -69,9 +76,26 @@ export function MyPage({
   ];
 
   const renderSection = () => {
+    // 3. 자식 컴포넌트에 구체화된 타입의 props 전달
     switch (currentSection) {
-      // ... 다른 섹션 케이스
-      case 'documents': // 5. documents 섹션 렌더링 및 props 전달
+      case 'profile':
+        return (
+          <ProfileSection 
+            userProfile={userProfile} 
+            isLoggedIn={isLoggedIn} 
+            onAction={onAction}
+            isLoading={isLoading['get_profile']}
+          />
+        );
+      case 'property':
+        return (
+          <PropertySection 
+            properties={properties}
+            onAction={onAction}
+            isLoading={isLoading['get_properties'] || isLoading['add_property'] || isLoading['upload_document']}
+          />
+        );
+      case 'documents':
         return (
           <DocumentSection 
             documents={documents}
@@ -79,31 +103,53 @@ export function MyPage({
             isLoading={isLoading['get_documents'] || isLoading['upload_document']}
           />
         );
+      case 'conversation':
+        return (
+          <ConversationSection 
+            conversations={conversations}
+            onAction={onAction}
+            isLoading={isLoading['get_conversations'] || isLoading['send_chat_message']}
+          />
+        );
       case 'link':
         return (
           <LinkSection 
             links={links} 
             onAction={onAction}
-            isLoading={isLoading['get_links'] || isLoading['create_link'] || isLoading['update_link']}
+            isLoading={isLoading['get_links'] || isLoading['create_link'] || isLoading['update_link'] || isLoading['delete_link']}
           />
         );
       default:
-        return <ProfileSection 
-            userProfile={userProfile} 
-            isLoggedIn={isLoggedIn} 
-            onAction={onAction}
-            isLoading={isLoading['get_profile']}
-          />;
+        return null;
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ... */}
-      <div className="container mx-auto ...">
+      <div className="bg-white border-b border-border sticky top-0 z-20">
+        {/* ... */}
+      </div>
+      <div className="container mx-auto px-4 sm:px-6 py-6 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-6">
           <aside className="lg:w-64 flex-shrink-0">
-            {/* ... 사이드바 메뉴 UI ... */}
+            <Card className="p-4 bg-white rounded-2xl shadow-md border-border">
+              <nav className="space-y-2">
+                {menuItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentSection(item.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-full transition-all text-left ${
+                      currentSection === item.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </Card>
           </aside>
           <main className="flex-1">
             {renderSection()}

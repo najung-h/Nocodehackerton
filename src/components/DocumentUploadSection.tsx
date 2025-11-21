@@ -1,18 +1,18 @@
-import image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0 from "figma:asset/nest.png";
 import { useState, useRef } from "react";
 import { Upload, FileText, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { toast } from "sonner";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ActionType } from "../types"; // 1. 타입 import
+import nestImage from "figma:asset/nest.png";
 
-// 1. props 타입 변경: onAnalysisComplete -> onAction
+// 2. Props 타입 구체화
 interface DocumentUploadSectionProps {
   onAction: (actionType: 'analyze_document', payload: { file: File }) => void;
 }
 
 export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) {
-  // 2. 내부 로딩/진행 상태 제거, 파일 상태만 유지
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -32,13 +32,9 @@ export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) 
     }
     
     setUploadedFile(file);
-
-    // 3. 내부 분석 함수 호출 대신 onAction prop 호출
     toast.info("문서 분석을 시작합니다...");
     onAction('analyze_document', { file });
   };
-
-  // 4. 내부 analyzeDocument 함수 전체 제거
 
   const handleRemoveFile = () => {
     setUploadedFile(null);
@@ -53,7 +49,7 @@ export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) 
         <div className="flex items-center gap-3">
           <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
             <ImageWithFallback
-              src={image_7aa8802e8a9a89ec6a81ed81887103f2d2aa3ff0}
+              src={nestImage}
               alt="둥지"
               className="w-full h-full object-cover"
             />
@@ -67,8 +63,7 @@ export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) 
             </p>
           </div>
         </div>
-
-        {/* 5. UI 로직 간소화: 이제 부모의 로딩 상태에 따라 UI가 결정됨 */}
+        
         {!uploadedFile ? (
           <div
             onClick={() => fileInputRef.current?.click()}
@@ -114,7 +109,6 @@ export function DocumentUploadSection({ onAction }: DocumentUploadSectionProps) 
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            {/* 로딩 및 완료 상태 표시는 이제 App.tsx에서 toast 등으로 처리하므로 여기서는 제거 */}
           </div>
         )}
       </div>
