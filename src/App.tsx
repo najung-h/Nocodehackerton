@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useCallback, useState } from "react";
 import {
   Search as SearchIcon,
@@ -41,12 +42,81 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-
-  const handleAction = useCallback(
+  
+  const CHECKLIST_WEBHOOK_URL = "https://ajjoona.app.n8n.cloud/webhook/checklist-test";
+  
+const handleAction = useCallback(
     async (actionType: ActionType, payload: any = {}) => {
-      // ... 중앙 컨트롤러 로직은 그대로 유지 ...
+      // 로딩 상태 시작 (버튼 비활성화용)
+      setIsLoading((prev) => ({ ...prev, [actionType]: true }));
+
+      try {
+        // ============================================================
+        // [수정] 체크리스트 리포트 내보내기 (PDF / Email) 통합 처리
+        // ============================================================
+        if (actionType === 'export_pdf' || actionType === 'send_email') {
+          
+          // 1. n8n 'If' 노드 분기를 위한 타입 결정 ('email' vs 'download')
+          const exportType = actionType === 'send_email' ? 'email' : 'download';
+          
+          // 2. 사용자 정보 가져오기 (없으면 테스트용 이메일 사용)
+          const userEmail = userProfile?.email || 'test@example.com';
+
+          // 3. n8n Webhook 호출
+          const response = await axios.post(
+            CHECKLIST_WEBHOOK_URL, 
+            {
+              // [중요] n8n 'Switch' 노드 통과를 위한 고정 값
+              action: 'export_report', 
+              
+              // [중요] n8n 'If' 노드 분기를 위한 값
+              export_type: exportType, 
+              
+              userEmail: userEmail,
+              ...payload
+            },
+            {
+              // PDF 다운로드('download')일 경우 파일(blob)로 받고, 
+              // 이메일 전송('email')일 경우 JSON으로 받음
+              responseType: exportType === 'download' ? 'blob' : 'json'
+            }
+          );
+
+          // 4. 응답 결과 처리
+          if (exportType === 'download') {
+            // [PDF 다운로드 처리]
+            // Blob 데이터를 가상 URL로 변환
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            // 파일명 설정 (예: checklist_report_2024-11-21.pdf)
+            link.setAttribute('download', `checklist_report_${new Date().toISOString().slice(0,10)}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            
+            toast.success('리포트가 다운로드되었습니다.');
+          } else {
+            // [이메일 발송 처리]
+            if (response.data && response.data.success) {
+              toast.success(`'${userEmail}'로 이메일이 발송되었습니다.`);
+            } else {
+              toast.error('이메일 발송에 실패했습니다.');
+            }
+          }
+        }
+        
+        // ... (기존의 다른 action 처리 로직들 유지: login, get_profile 등) ...
+
+      } catch (error) {
+        console.error('Action Error:', error);
+        toast.error('요청을 처리하는 중 오류가 발생했습니다.');
+      } finally {
+        // 로딩 상태 종료
+        setIsLoading((prev) => ({ ...prev, [actionType]: false }));
+      }
     },
-    [isLoggedIn]
+    [userProfile] // userProfile 의존성 확인
   );
 
   const renderPageContent = () => {

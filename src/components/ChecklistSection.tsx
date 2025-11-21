@@ -35,6 +35,23 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
     onAction('add_to_calendar', { item });
   }, [onAction]);
   
+  // 1. PDF 내보내기 버튼 핸들러
+  const handleExportPDF = () => {
+    // 'export_pdf' 액션으로 호출 -> App.tsx에서 처리
+    onAction('export_pdf', { 
+      // 필요한 경우 현재 체크리스트 상태 등을 payload로 전달 가능
+      phase: activeTab 
+    });
+  };
+
+  // 2. 이메일 발송 버튼 핸들러
+  const handleSendEmail = () => {
+    // 'send_email' 액션으로 호출
+    onAction('send_email', {
+      phase: activeTab
+    });
+  };
+
   const handleExecuteAction = useCallback((actionType: string, payload?: any) => {
     onAction(actionType as ActionType, payload);
   }, [onAction]);
@@ -47,19 +64,39 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
       )
     }));
   };
-
+  
   return (
     <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 md:p-6">
       <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
         <h2 className="text-foreground">전월세 계약 체크리스트</h2>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => setIsChatOpen(true)} className="rounded-full ...">
-            <MessageSquare className="size-4 md:mr-2" />
-            <span className="hidden sm:inline">AI 비서와 상담</span>
+          {/* 3. PDF 버튼에 핸들러 및 로딩 상태 연결 */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExportPDF} 
+            disabled={isLoading['export_pdf']} // 로딩 중 비활성화
+            className="rounded-full border-primary/30 text-primary hover:bg-primary/10 flex-1 md:flex-initial"
+          >
+            <Download className="size-4 md:mr-2" />
+            <span className="hidden sm:inline">PDF</span>
+          </Button>
+          
+          {/* 4. 메일 버튼에 핸들러 및 로딩 상태 연결 */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleSendEmail} 
+            disabled={isLoading['send_email']} // 로딩 중 비활성화
+            className="rounded-full border-primary/30 text-primary hover:bg-primary/10 flex-1 md:flex-initial"
+          >
+            <Mail className="size-4 md:mr-2" />
+            <span className="hidden sm:inline">메일</span>
           </Button>
         </div>
       </div>
 
+      
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChecklistPhase)}>
         {/* ... */}
         <TabsContent value="before">
