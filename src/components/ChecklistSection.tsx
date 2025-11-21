@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ProgressBar } from './ProgressBar';
 import { ChecklistList } from './ChecklistList';
 import { Button } from './ui/button';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Download, Mail } from 'lucide-react';
 import { ChatDialog } from './ChatDialog';
 import { ActionType, ChecklistItemData } from '../types'; // 1. 타입 import
 
@@ -96,7 +96,7 @@ export function ChecklistSection({ onAction, isLoading }: ChecklistSectionProps)
         </div>
       </div>
 
-      
+
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChecklistPhase)}>
         {/* ... */}
         <TabsContent value="before">
