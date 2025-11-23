@@ -69,7 +69,7 @@ class DocumentAnalysisService {
   constructor() {
     // Vite 환경 변수 사용 (VITE_ 접두사 필요)
     this.webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 
-                      'https://najungh.app.n8n.cloud/webhook-test/analyze-document-langchain';
+                      'https://your-n8n.com/webhook/analyze-document';
   }
 
   /**
